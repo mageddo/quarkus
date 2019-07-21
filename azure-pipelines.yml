@@ -257,6 +257,7 @@ stages:
       - template: ci-templates/native-build-steps.yaml
         parameters:
           modules:
+            - cache
             - infinispan-cache-jpa
             - infinispan-client
             - mongodb-client

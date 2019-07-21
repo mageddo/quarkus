@@ -63,6 +63,7 @@
         <module>maven</module>
         <module>kotlin</module>
         <module>scala</module>
+        <module>cache</module>
     </modules>
 
     <build>

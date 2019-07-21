@@ -1,0 +1,13 @@
+////
+This guide is maintained in the main Quarkus repository
+and pull requests should be submitted there:
+https://github.com/quarkusio/quarkus/tree/master/docs/src/main/asciidoc
+////
+= Quarkus - Application Data Caching
+
+include::./attributes.adoc[]
+
+[WARNING]
+====
+This guide needs to be written.
+====
