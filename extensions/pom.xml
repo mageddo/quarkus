@@ -111,6 +111,7 @@
 
         <!-- Caching -->
         <module>caffeine</module>
+        <module>cache</module>
 
         <!-- Integrations -->
         <module>amazon-lambda</module>
