@@ -69,6 +69,7 @@
         <module>mongodb-panache</module>
         <module>narayana-stm</module>
         <module>elytron-security-jdbc</module>
+        <module>cache</module>
     </modules>
 
     <build>

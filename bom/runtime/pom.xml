@@ -668,6 +668,11 @@
                 <artifactId>quarkus-elytron-security-jdbc</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>io.quarkus</groupId>
+                <artifactId>quarkus-cache</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <!-- Quarkus test dependencies -->
             <dependency>

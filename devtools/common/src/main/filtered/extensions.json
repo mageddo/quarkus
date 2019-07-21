@@ -743,5 +743,15 @@
     "groupId": "io.quarkus",
     "artifactId": "quarkus-vertx",
     "guide": "https://quarkus.io/guides/using-vertx"
+  },
+  {
+    "name": "Application Data Caching",
+    "labels": [
+      "cache",
+      "caching"
+    ],
+    "groupId": "io.quarkus",
+    "artifactId": "quarkus-cache",
+    "guide": "https://quarkus.io/guides/application-data-caching-guide"
   }
 ]
