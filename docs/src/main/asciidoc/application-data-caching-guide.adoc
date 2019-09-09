@@ -7,7 +7,337 @@ https://github.com/quarkusio/quarkus/tree/master/docs/src/main/asciidoc
 
 include::./attributes.adoc[]
 
+<<<<<<< Updated upstream
 [WARNING]
+=======
+In this guide, you will learn how to enable application data caching on any CDI managed bean in Quarkus.
+
+== Prerequisites
+
+To complete this guide, you need:
+
+* less than 15 minutes
+* an IDE
+* JDK 1.8+ installed with `JAVA_HOME` configured appropriately
+* Apache Maven 3.5.3+
+
+== Architecture
+
+To demonstrate the Quarkus caching abilities, 
+
+
+
+let's say you want to expose in your Quarkus application a REST API that allows
+users to retrieve the weather forecast for the next three days. The problem is that you have to rely on an external
+meteorological service which only accepts requests for one day at a time and takes forever to answer. Since the weather
+forecast is updated once every two hours, caching the service responses would definitely improve your API performances.
+
+That's what we'll do in this guide using a single annotation.
+
+== Solution
+
+We recommend that you follow the instructions in the next sections and create the application step by step.
+However, you can go right to the completed example.
+
+Clone the Git repository: `git clone {quickstarts-clone-url}`, or download an {quickstarts-archive-url}[archive].
+
+The solution is located in the `application-data-caching` directory.
+
+== Creating the Maven project
+
+First, we need a new project. Create a new project with the following command:
+
+[source,shell,subs=attributes+]
+----
+mvn io.quarkus:quarkus-maven-plugin:{quarkus-version}:create \
+    -DprojectGroupId=org.acme \
+    -DprojectArtifactId=application-data-caching \
+    -DclassName="org.acme.caching.WeatherForecastResource" \
+    -Dpath="/weather" \
+    -Dextensions="cache,resteasy-jsonb"
+----
+
+This command generates the Maven project with a REST endpoint and imports the `cache` and `resteasy-jsonb` extensions.
+
+== Creating the REST API
+
+First, we need to add a very simple model for a daily weather forecast. Create
+`src/main/java/org/acme/caching/WeatherForecast.java` with the following content:
+
+[source,java]
+----
+package org.acme.caching;
+
+public class WeatherForecast {
+
+    private LocalDate date;
+    private String city;
+    private String forecast;
+
+    public Gift(LocalDate date, String city, String forecast) {
+        this.date = date;
+        this.city = city;
+        this.forecast = forecast;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getForecast() {
+        return forecast;
+    }
+
+    public void setForecast(String forecast) {
+        this.forecast = forecast;
+    }
+
+    @Override
+    public String toString() {
+        return "WeatherForecast [date=" + date + ", city=" + city + ", forecast= " + forecast + "]";
+    }
+}
+----
+
+We also need to create a service in our Quarkus application which will be in charge of calling the external meteorological
+service. Create `src/main/java/org/acme/caching/WeatherForecastService.java` this way:
+
+
+[source,java]
+----
+package org.acme.caching;
+
+import javax.enterprise.context.ApplicationScoped;
+
+@ApplicationScoped
+public class WeatherForecastService {
+
+    public WeatherForecast getForecast(LocalDate date, String city) {
+        try {
+            Thread.sleep(3000L);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        String forecast = random basé sur du modulo;
+        return new WeatherForecast(date, city, forecast);
+    }
+}
+----
+
+
+
+
+
+
+
+
+
+
+We want to call this repository from the existing `GiftResource` REST endpoint. Let's make a few changes in this class:
+
+[source,java]
+----
+package org.acme.caching;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
+@Path("/weather")
+public class WeatherForecastResource {
+
+    @Inject
+    WeatherForecastService service; <1>
+
+    @GET
+    @Path("/{city}")
+    @Produces(MediaType.JSON)
+    public List<WeatherForecast> getGift(@PathParam("city") String city) {
+    
+    
+    
+    
+    
+        return service.getForecast(city); <2>
+        
+        
+        
+    }
+}
+----
+<1> bla
+<2> blabla
+
+We're all done! Let's check if everything's working.
+
+First, run the application using `./mvnw compile quarkus:dev` from the project directory.
+
+Then, `http://localhost:8080/gift/123` from a browser. After 5 long seconds, the application answers:
+
+[source]
+----
+Gift {
+    "reference": "123",
+    "description": "Some gift description"
+}
+----
+
+You can try calling the same URL again and again, it will always take 5 seconds to answer.
+
+== Enabling the cache
+
+The time has come to experience the Quarkus developer joy!
+
+Edit the `GiftRepository` class to add the `@CacheLoad` annotation:
+
+[source,java]
+----
+package org.acme.caching;
+
+import javax.enterprise.context.ApplicationScoped;
+
+@ApplicationScoped
+public class GiftRepository {
+
+    @CacheLoad <1>
+    public Gift getByReference(String reference) {
+        try {
+            Thread.sleep(5000L);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        return new Gift(reference, "Some gift description");
+    }
+}
+----
+
+<1> annot
+
+Call `http://localhost:8080/gift/123` another time from your browser. You're still waiting a long time before receiving an
+answer. It's normal since the server just restarted and the repository was called.
+
+Wait a second! The server restarted by itself after the `GiftRepository` edit? Yes, that's one of Quarkus amazing features for
+developers called hot reload. More here...
+
+Now, comes the real test. Call `http://localhost:8080/gift/123` one more time. This time, the response came almost immediatly
+from the cache and the repository wasn't called.
+
+If you try again with a different gift reference, let's say `http://localhost:8080/gift/456`, the first response will take 5
+seconds to come from the repository. If you try several times again with the same URL, the response will comme instantly from
+the cache.
+
+Congratulations, you just added the application data cache to a Quarkus application with a single line of code!
+
+Do you want to learn more about the Quarkus caching abilities? The next section will show you how to configure.
+
+== Caching annotations
+
+Quarkus application data caching is an annotation-based declarative caching backed by Caffeine/https://github.com/ben-manes/caffeine,
+a high performance, near optimal in-memory caching library.
+
+The Configuring section will show you how to configure the Caffeine caches using the Quarkus application.properties file, but for now let's focus on the Quarkus caching annotations.
+
+[TIP]
+>>>>>>> Stashed changes
 ====
 This guide needs to be written.
 ====
+<<<<<<< Updated upstream
+=======
+
+=== @CacheLoad
+
+When a method annotated with `@CacheLoad` is invoked, Quarkus will check in the cache whether the method has been already
+invoked for the given arguments. This check is done using a cache key computed from all the method arguments if none of them is
+annotated with `@CacheKey`, or all the arguments annotated with `@CacheKey` otherwise. If a value is found in the cache, it
+is returned and the annotated method is never actually executed. If no value is found, the annotated method is invoked and the
+returned value is stored in the cache using the computed key.
+
+This annotation can't be used on methods returning `void` and requires at least one method argument to compute the key.
+
+=== @CacheStore
+
+When a method annotated with `@CacheStore` is invoked, Quarkus will cache its return value at the end of the invocation. The
+caching is done using a cache key computed from all the method arguments if none of them is annotated with `@CacheKey`, or all
+the arguments annotated with `@CacheKey` otherwise. If a value is already present in the cache for the computed key, it is
+replaced.
+
+This annotation can't be used on methods returning `void` and requires at least one method argument to compute the
+
+=== @CacheInvalidate
+
+When a method annotated with `@CacheInvalidate` is invoked, Quarkus will try to remove an existing entry from the cache. This
+removal is done using a cache key computed from all the method arguments if none of them is annotated with `@CacheKey`, or all
+the arguments annotated with `@CacheKey` otherwise. If the key does not identify any cache entry, nothing will happen.
+
+This annotation requires at least one method argument to compute the key.
+
+=== @CacheInvalidateAll
+
+When a method annotated with `@CacheInvalidateAll` is invoked, Quarkus will remove all entries from the cache.
+
+=== @CacheKey
+
+When a method argument is annotated with `@CacheKey`, it is identified as a part of a cache key during an invocation of a
+method annotated with `@CacheLoad`, `@CacheStore` or `@CacheInvalidate`.
+
+This annotation is optional and should only be used when some of the method arguments are NOT part of the cache key.
+
+== Configuring the underlying caching provider
+
+For now, Caffeine is the only available caching provider in Quarkus. We plan to add more providers soon.
+
+=== Caffeine configuration properties
+
+The following properties can be added to the Quarkus `application.properties` file to configure a Caffeine cache named
+`cache-name`. You can replace.
+
+`quarkus.cache.caffeine.namespace."cache-name".initial-capacity`::
+Minimum total size for the internal data structures. Providing a large enough estimate at construction time avoids the need for
+expensive resizing operations later, but setting this value unnecessarily high wastes memory.
+
+`quarkus.cache.caffeine.namespace."cache-name".maximum-size`::
+Maximum number of entries the cache may contain. Note that the cache may evict an entry before this limit is exceeded or
+temporarily exceed the threshold while evicting. As the cache size grows close to the maximum, the cache evicts entries that
+are less likely to be used again. For example, the cache may evict an entry because it hasn't been used recently or very often.
+
+`quarkus.cache.caffeine.namespace."cache-name".expire-after-write`::
+Specifies that each entry should be automatically removed from the cache once a fixed duration has elapsed after the entry's
+creation, or the most recent replacement of its value.
+
+`quarkus.cache.caffeine.namespace."cache-name".expire-after-access`::
+Specifies that each entry should be automatically removed from the cache once a fixed duration has elapsed after the entry's
+creation, the most recent replacement of its value, or its last read.
+
+Here's an example of Caffeine cache configuration:
+
+[source,properties]
+----
+quarkus.cache.caffeine.namespace."toto".initial-capacity=10 <1>
+quarkus.cache.caffeine.namespace."toto".maximum-suze=100
+etc
+second cache aussi <2>
+----
+<1> expl
+<2> expl
+
+
+
+
+
+Then, thanks to a simple annotation, we will take advantage of the Quarkus in-memory cache and greatly reduce the impact of the
+repository slowness on the application.
+>>>>>>> Stashed changes
