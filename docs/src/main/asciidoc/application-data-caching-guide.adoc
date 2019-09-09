@@ -7,9 +7,6 @@ https://github.com/quarkusio/quarkus/tree/master/docs/src/main/asciidoc
 
 include::./attributes.adoc[]
 
-<<<<<<< Updated upstream
-[WARNING]
-=======
 In this guide, you will learn how to enable application data caching on any CDI managed bean in Quarkus.
 
 == Prerequisites
@@ -21,18 +18,14 @@ To complete this guide, you need:
 * JDK 1.8+ installed with `JAVA_HOME` configured appropriately
 * Apache Maven 3.5.3+
 
-== Architecture
+== Scenario
 
-To demonstrate the Quarkus caching abilities, 
+Let's imagine you want to expose in your Quarkus application a REST API that allows users to retrieve the weather forecast for
+the next three days. The problem is that you have to rely on an external meteorological service which only accepts requests for
+one day at a time and takes forever to answer. Since the weather forecast is updated once every two hours, caching the service
+responses would definitely improve your API performances.
 
-
-
-let's say you want to expose in your Quarkus application a REST API that allows
-users to retrieve the weather forecast for the next three days. The problem is that you have to rely on an external
-meteorological service which only accepts requests for one day at a time and takes forever to answer. Since the weather
-forecast is updated once every two hours, caching the service responses would definitely improve your API performances.
-
-That's what we'll do in this guide using a single annotation.
+We'll do that using a single Quarkus annotation.
 
 == Solution
 
@@ -61,202 +54,199 @@ This command generates the Maven project with a REST endpoint and imports the `c
 
 == Creating the REST API
 
-First, we need to add a very simple model for a daily weather forecast. Create
-`src/main/java/org/acme/caching/WeatherForecast.java` with the following content:
+First, let's create a service that will simulate an extremely slow call to the external meteorological service. Create
+`src/main/java/org/acme/caching/WeatherForecastService.java` with the following content:
 
 [source,java]
 ----
 package org.acme.caching;
 
-public class WeatherForecast {
-
-    private LocalDate date;
-    private String city;
-    private String forecast;
-
-    public Gift(LocalDate date, String city, String forecast) {
-        this.date = date;
-        this.city = city;
-        this.forecast = forecast;
-    }
-
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public String getForecast() {
-        return forecast;
-    }
-
-    public void setForecast(String forecast) {
-        this.forecast = forecast;
-    }
-
-    @Override
-    public String toString() {
-        return "WeatherForecast [date=" + date + ", city=" + city + ", forecast= " + forecast + "]";
-    }
-}
-----
-
-We also need to create a service in our Quarkus application which will be in charge of calling the external meteorological
-service. Create `src/main/java/org/acme/caching/WeatherForecastService.java` this way:
-
-
-[source,java]
-----
-package org.acme.caching;
+import java.time.LocalDate;
 
 import javax.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class WeatherForecastService {
 
-    public WeatherForecast getForecast(LocalDate date, String city) {
+    public String getDailyForecast(LocalDate date, String city) {
         try {
-            Thread.sleep(3000L);
+            Thread.sleep(2000L); <1>
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
-        String forecast = random basé sur du modulo;
-        return new WeatherForecast(date, city, forecast);
+        return date.getDayOfWeek() + " will be " + getDailyResult(date.getDayOfMonth() % 4) + " in " + city;
+    }
+
+    private String getDailyResult(int dayOfMonthModuloFour) {
+        switch (dayOfMonthModuloFour) {
+            case 0:
+                return "sunny";
+            case 1:
+                return "cloudy";
+            case 2:
+                return "chilly";
+            case 3:
+                return "rainy";
+            default:
+                throw new IllegalArgumentException();
+        }
     }
 }
 ----
+<1> This is where the slowness comes from.
 
-
-
-
-
-
-
-
-
-
-We want to call this repository from the existing `GiftResource` REST endpoint. Let's make a few changes in this class:
+We also need a class that will contain the response sent to the user when he asks for the next three days weather forecast.
+Create `src/main/java/org/acme/caching/WeatherForecast.java` this way:
 
 [source,java]
 ----
 package org.acme.caching;
 
+import java.util.List;
+
+public class WeatherForecast {
+
+    private List<String> dailyForecasts;
+
+    private long executionTimeInMs;
+
+    public WeatherForecast(List<String> dailyForecasts, long executionTimeInMs) {
+        this.dailyForecasts = dailyForecasts;
+        this.executionTimeInMs = executionTimeInMs;
+    }
+
+    public List<String> getDailyForecasts() {
+        return dailyForecasts;
+    }
+
+    public long getExecutionTimeInMs() {
+        return executionTimeInMs;
+    }
+}
+----
+
+Now, we just need to update the generated `WeatherForecastResource` to use the service and response:
+
+[source,java]
+----
+package org.acme.caching;
+
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 @Path("/weather")
 public class WeatherForecastResource {
 
     @Inject
-    WeatherForecastService service; <1>
+    private WeatherForecastService service;
 
     @GET
-    @Path("/{city}")
-    @Produces(MediaType.JSON)
-    public List<WeatherForecast> getGift(@PathParam("city") String city) {
-    
-    
-    
-    
-    
-        return service.getForecast(city); <2>
-        
-        
-        
+    @Produces(MediaType.APPLICATION_JSON)
+    public WeatherForecast getForecast(@QueryParam("city") String city) {
+        long executionStart = System.currentTimeMillis();
+        List<String> dailyForecasts = Arrays.asList(
+                service.getDailyForecast(LocalDate.now(), city), <1>
+                service.getDailyForecast(LocalDate.now().plusDays(1L), city), <2>
+                service.getDailyForecast(LocalDate.now().plusDays(2L), city) <3>
+        );
+        long executionEnd = System.currentTimeMillis();
+        return new WeatherForecast(dailyForecasts, executionEnd - executionStart);
     }
 }
 ----
-<1> bla
-<2> blabla
+<1> This will retrieve the weather forecast for today.
+<2> Same thing for tomorrow.
+<3> And the day after tomorrow.
 
 We're all done! Let's check if everything's working.
 
 First, run the application using `./mvnw compile quarkus:dev` from the project directory.
 
-Then, `http://localhost:8080/gift/123` from a browser. After 5 long seconds, the application answers:
+Then, call `http://localhost:8080/weather?city=Raleigh` from a browser. After 6 long seconds, the application will answer
+something like this (the content will vary depending on the day you run the code):
 
 [source]
 ----
-Gift {
-    "reference": "123",
-    "description": "Some gift description"
-}
+{"dailyForecasts":["MONDAY will be cloudy in Raleigh","TUESDAY will be chilly in Raleigh","WEDNESDAY will be rainy in Raleigh"],"executionTimeInMs":6001}
 ----
 
-You can try calling the same URL again and again, it will always take 5 seconds to answer.
+You can try calling the same URL again and again, it will always take 6 seconds to answer.
 
 == Enabling the cache
 
-The time has come to experience the Quarkus developer joy!
-
-Edit the `GiftRepository` class to add the `@CacheLoad` annotation:
+Now that your Quarkus application is up and running, let's tremendously improve its response time by caching the external
+meteorological service responses. Update the `WeatherForecastService` class like this:
 
 [source,java]
 ----
 package org.acme.caching;
 
+import java.time.LocalDate;
+
 import javax.enterprise.context.ApplicationScoped;
 
+import io.quarkus.cache.CacheLoad;
+
 @ApplicationScoped
-public class GiftRepository {
+public class WeatherForecastService {
 
     @CacheLoad <1>
-    public Gift getByReference(String reference) {
+    public String getDailyForecast(LocalDate date, String city) {
         try {
-            Thread.sleep(5000L);
+            Thread.sleep(2000L);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
-        return new Gift(reference, "Some gift description");
+        return date.getDayOfWeek() + " will be " + getDailyResult(date.getDayOfMonth() % 4) + " in " + city;
+    }
+
+    private String getDailyResult(int dayOfMonthModuloFour) {
+        switch (dayOfMonthModuloFour) {
+            case 0:
+                return "sunny";
+            case 1:
+                return "cloudy";
+            case 2:
+                return "chilly";
+            case 3:
+                return "rainy";
+            default:
+                throw new IllegalArgumentException();
+        }
     }
 }
 ----
+<1> We only added this annotation (and the associated import of course).
 
-<1> annot
+Let's try to call `http://localhost:8080/weather?city=Raleigh` again. You're still waiting a long time before receiving an
+answer. This is normal since the server just restarted and the cache was empty.
 
-Call `http://localhost:8080/gift/123` another time from your browser. You're still waiting a long time before receiving an
-answer. It's normal since the server just restarted and the repository was called.
+Wait a second! The server restarted by itself after the `WeatherForecastService` update? Yes, this is one of Quarkus amazing
+features for developers called `hot reload`.
 
-Wait a second! The server restarted by itself after the `GiftRepository` edit? Yes, that's one of Quarkus amazing features for
-developers called hot reload. More here...
+Now that the cache was loaded during the previous call, let's try it again. This time, you should get a super fast answer with
+an `executionTimeInMs` value close to zero.
 
-Now, comes the real test. Call `http://localhost:8080/gift/123` one more time. This time, the response came almost immediatly
-from the cache and the repository wasn't called.
+You can also try calling the same URL with a different city and see the cache in action again. The first call will take 6
+seconds and the following ones will be answered immediately.  
 
-If you try again with a different gift reference, let's say `http://localhost:8080/gift/456`, the first response will take 5
-seconds to come from the repository. If you try several times again with the same URL, the response will comme instantly from
-the cache.
+Congratulations, you just added the application data cache to your Quarkus application with a single line of code!
 
-Congratulations, you just added the application data cache to a Quarkus application with a single line of code!
-
-Do you want to learn more about the Quarkus caching abilities? The next section will show you how to configure.
+Do you want to learn more about the Quarkus application data caching abilities? The following sections will show you everything
+there is to know about it.
 
 == Caching annotations
 
-Quarkus application data caching is an annotation-based declarative caching backed by Caffeine/https://github.com/ben-manes/caffeine,
-a high performance, near optimal in-memory caching library.
-
-The Configuring section will show you how to configure the Caffeine caches using the Quarkus application.properties file, but for now let's focus on the Quarkus caching annotations.
-
-[TIP]
->>>>>>> Stashed changes
-====
-This guide needs to be written.
-====
-<<<<<<< Updated upstream
-=======
+Quarkus offers four method-level annotations and on method parameter-level annotations that can be used on a CDI managed bean
+to enable caching abilities:
 
 === @CacheLoad
 
@@ -298,9 +288,28 @@ This annotation is optional and should only be used when some of the method argu
 
 == Configuring the underlying caching provider
 
-For now, Caffeine is the only available caching provider in Quarkus. We plan to add more providers soon.
+For now, https://github.com/ben-manes/caffeine[Caffeine] is the only available local caching provider in Quarkus. We plan to
+add more providers soon.
 
 === Caffeine configuration properties
+
+Caffeine is a high performance, near optimal caching library based on Java 8.
+
+
+
+
+
+
+Each underlying cache
+
+ It can be configured in Quarkus by adding the
+following properties to the `application.properties` file.
+
+
+
+
+
+
 
 The following properties can be added to the Quarkus `application.properties` file to configure a Caffeine cache named
 `cache-name`. You can replace.
@@ -337,7 +346,3 @@ second cache aussi <2>
 
 
 
-
-Then, thanks to a simple annotation, we will take advantage of the Quarkus in-memory cache and greatly reduce the impact of the
-repository slowness on the application.
->>>>>>> Stashed changes
