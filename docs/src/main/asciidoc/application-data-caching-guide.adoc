@@ -170,7 +170,7 @@ We're all done! Let's check if everything's working.
 
 First, run the application using `./mvnw compile quarkus:dev` from the project directory.
 
-Then, call `http://localhost:8080/weather?city=Raleigh` from a browser. After six long seconds, the application will answer
+Then, call `http://localhost:8080/weather?city=Raleigh` from a browser. After 6 long seconds, the application will answer
 something like this:
 
 [source]
@@ -183,7 +183,7 @@ something like this:
 The response content may vary depending on the day you run the code.
 ====
 
-You can try calling the same URL again and again, it will always take six seconds to answer.
+You can try calling the same URL again and again, it will always take 6 seconds to answer.
 
 == Enabling the cache
 
@@ -238,9 +238,9 @@ Wait a second! The server restarted by itself after the `WeatherForecastService`
 features for developers called `hot reload`.
 
 Now that the cache was loaded during the previous call, let's try it again. This time, you should get a super fast answer with
-an `executionTimeInMs` value close to zero.
+an `executionTimeInMs` value close to 0.
 
-You can also try calling the same URL with a different city and see the cache in action again. The first call will take six
+You can also try calling the same URL with a different city and see the cache in action again. The first call will take 6
 seconds and the following ones will be answered immediately.  
 
 Congratulations, you just added the application data cache to your Quarkus application with a single line of code!
