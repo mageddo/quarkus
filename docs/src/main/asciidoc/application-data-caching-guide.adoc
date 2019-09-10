@@ -7,7 +7,7 @@ https://github.com/quarkusio/quarkus/tree/master/docs/src/main/asciidoc
 
 include::./attributes.adoc[]
 
-In this guide, you will learn how to enable application data caching on any CDI managed bean in Quarkus.
+In this guide, you will learn how to enable application data caching in any CDI managed bean in Quarkus.
 
 == Prerequisites
 
@@ -38,7 +38,7 @@ The solution is located in the `application-data-caching` directory.
 
 == Creating the Maven project
 
-First, we need a new Quarkus project. Create it with the following command:
+First, we need to create a new Quarkus project using Maven with the following command:
 
 [source,shell,subs=attributes+]
 ----
@@ -122,6 +122,8 @@ public class WeatherForecast {
     public long getExecutionTimeInMs() {
         return executionTimeInMs;
     }
+
+    // Setters omitted.
 }
 ----
 
@@ -150,21 +152,20 @@ public class WeatherForecastResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public WeatherForecast getForecast(@QueryParam("city") String city) {
+    public WeatherForecast getForecast(@QueryParam("city") String city, @QueryParam("daysInFuture") long daysInFuture) { <1>
         long executionStart = System.currentTimeMillis();
         List<String> dailyForecasts = Arrays.asList(
-                service.getDailyForecast(LocalDate.now(), city), <1>
-                service.getDailyForecast(LocalDate.now().plusDays(1L), city), <2>
-                service.getDailyForecast(LocalDate.now().plusDays(2L), city) <3>
+                service.getDailyForecast(LocalDate.now().plusDays(daysInFuture), city),
+                service.getDailyForecast(LocalDate.now().plusDays(daysInFuture + 1L), city),
+                service.getDailyForecast(LocalDate.now().plusDays(daysInFuture + 2L), city)
         );
         long executionEnd = System.currentTimeMillis();
         return new WeatherForecast(dailyForecasts, executionEnd - executionStart);
     }
 }
 ----
-<1> This will retrieve the weather forecast for today.
-<2> Same thing for tomorrow.
-<3> And the day after tomorrow.
+<1> If the `daysInFuture` query parameter is omitted, the three days weather forecast will start from the current day.
+Otherwise, it will start from the current day plus the `daysInFuture` value.
 
 We're all done! Let's check if everything's working.
 
@@ -237,8 +238,12 @@ answer. This is normal since the server just restarted and the cache was empty.
 Wait a second! The server restarted by itself after the `WeatherForecastService` update? Yes, this is one of Quarkus amazing
 features for developers called `hot reload`.
 
-Now that the cache was loaded during the previous call, let's try it again. This time, you should get a super fast answer with
+Now that the cache was loaded during the previous call, try calling the same URL. This time, you should get a super fast answer with
 an `executionTimeInMs` value close to 0.
+
+Let's see what happens if we start from one day in the future using the
+`http://localhost:8080/weather?city=Raleigh&daysInFuture=1` URL. You should get an answer 2 seconds later since two of the
+three requested days were already loaded in the cache.
 
 You can also try calling the same URL with a different city and see the cache in action again. The first call will take 6
 seconds and the following ones will be answered immediately.  
@@ -300,7 +305,8 @@ add more providers soon.
 
 Caffeine is a high performance, near optimal caching library based on Java 8.
 
-
+Each of the Caffeine caches backing up the Quarkus application data caching extension can be configured using the following
+properties in the `application.properties` file.
 
 
 
@@ -351,6 +357,3 @@ second cache aussi <2>
 
 
 
-
-
-TODO: changer la date d'un jour ?
