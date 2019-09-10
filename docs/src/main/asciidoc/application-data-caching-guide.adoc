@@ -127,7 +127,7 @@ public class WeatherForecast {
 }
 ----
 
-Now, we just need to update the generated `WeatherForecastResource` to use the service and response:
+Now, we just need to update the generated `WeatherForecastResource` class to use the service and response:
 
 [source,java]
 ----
@@ -171,7 +171,7 @@ We're all done! Let's check if everything's working.
 
 First, run the application using `./mvnw compile quarkus:dev` from the project directory.
 
-Then, call `http://localhost:8080/weather?city=Raleigh` from a browser. After 6 long seconds, the application will answer
+Then, call `http://localhost:8080/weather?city=Raleigh` from a browser. After six long seconds, the application will answer
 something like this:
 
 [source]
@@ -184,7 +184,7 @@ something like this:
 The response content may vary depending on the day you run the code.
 ====
 
-You can try calling the same URL again and again, it will always take 6 seconds to answer.
+You can try calling the same URL again and again, it will always take six seconds to answer.
 
 == Enabling the cache
 
@@ -242,20 +242,20 @@ Now that the cache was loaded during the previous call, try calling the same URL
 an `executionTimeInMs` value close to 0.
 
 Let's see what happens if we start from one day in the future using the
-`http://localhost:8080/weather?city=Raleigh&daysInFuture=1` URL. You should get an answer 2 seconds later since two of the
-three requested days were already loaded in the cache.
+`http://localhost:8080/weather?city=Raleigh&daysInFuture=1` URL. You should get an answer two seconds later since two of the
+requested days were already loaded in the cache.
 
-You can also try calling the same URL with a different city and see the cache in action again. The first call will take 6
+You can also try calling the same URL with a different city and see the cache in action again. The first call will take six
 seconds and the following ones will be answered immediately.  
 
-Congratulations, you just added the application data cache to your Quarkus application with a single line of code!
+Congratulations! You just added the application data cache to your Quarkus application with a single line of code!
 
 Do you want to learn more about the Quarkus application data caching abilities? The following sections will show you everything
 there is to know about it.
 
 == Caching annotations
 
-Quarkus offers four method-level annotations and one parameter-level annotation that can be used on a CDI managed bean to
+Quarkus offers four method-level annotations and one argument-level annotation that can be used in a CDI managed bean to
 enable caching abilities:
 
 === @CacheLoad
@@ -285,9 +285,23 @@ the arguments annotated with `@CacheKey` otherwise. If the key does not identify
 
 This annotation requires at least one method argument to compute the key.
 
+[TIP]
+====
+If the `@CacheLoad`, `@CacheStore` or `@CacheInvalidate` annotations are used on a method with no parameters, a unique default
+cache key derived from the cache name will be generated and used.
+====
+
 === @CacheInvalidateAll
 
 When a method annotated with `@CacheInvalidateAll` is invoked, Quarkus will remove all entries from the cache.
+
+[TIP]
+====
+Each of the `@CacheLoad`, `@CacheStore`, `@CacheInvalidate` and `@CacheInvalidateAll` annotations takes an optional `cacheName`
+parameter which can be used to specify the name of the cache. This is especially useful when the same cache must be accessed
+from several classes. If the cache name is not specified, the fully qualified name of the class where the annotated method is
+declared will be used as the default cache name.
+====
 
 === @CacheKey
 
@@ -308,22 +322,10 @@ Caffeine is a high performance, near optimal caching library based on Java 8.
 Each of the Caffeine caches backing up the Quarkus application data caching extension can be configured using the following
 properties in the `application.properties` file.
 
-
-
-
-Each underlying cache
-
- It can be configured in Quarkus by adding the
-following properties to the `application.properties` file.
-
-
-
-
-
-
-
-The following properties can be added to the Quarkus `application.properties` file to configure a Caffeine cache named
-`cache-name`. You can replace.
+[TIP]
+====
+You need to replace `cache-name` in all of the following properties with the real name of the cache you want to configure.
+====
 
 `quarkus.cache.caffeine.namespace."cache-name".initial-capacity`::
 Minimum total size for the internal data structures. Providing a large enough estimate at construction time avoids the need for
@@ -342,18 +344,131 @@ creation, or the most recent replacement of its value.
 Specifies that each entry should be automatically removed from the cache once a fixed duration has elapsed after the entry's
 creation, the most recent replacement of its value, or its last read.
 
-Here's an example of Caffeine cache configuration:
+Here's what your cache configuration could look like:
 
 [source,properties]
 ----
-quarkus.cache.caffeine.namespace."toto".initial-capacity=10 <1>
-quarkus.cache.caffeine.namespace."toto".maximum-suze=100
-etc
-second cache aussi <2>
+quarkus.cache.caffeine.namespace."foo".initial-capacity=10 <1>
+quarkus.cache.caffeine.namespace."foo".maximum-size=20 <1>
+quarkus.cache.caffeine.namespace."foo".expire-after-write <1>
+quarkus.cache.caffeine.namespace."bar".maximum-size=1000 <2>
 ----
-<1> expl
-<2> expl
+<1> The `foo` cache is being configured.
+<2> The `bar` cache is being configured.
 
+== Annotated beans examples
 
+=== Implicit cache name and default cache key
 
+[source,java]
+----
+package org.acme.caching;
 
+import javax.enterprise.context.Dependent;
+
+import io.quarkus.cache.CacheInvalidate;
+import io.quarkus.cache.CacheInvalidateAll;
+import io.quarkus.cache.CacheLoad;
+import io.quarkus.cache.CacheStore;
+
+@Dependent
+public class CachedService {
+
+    @CacheLoad <1>
+    public String load() { <2>
+        // Call expensive service here.
+    }
+
+    @CacheStore <1>
+    public String store() { <2>
+        // Call expensive service here.
+    }
+
+    @CacheInvalidate <1>
+    public void invalidate() { <2>
+    }
+
+    @CacheInvalidateAll <1>
+    public void invalidateAll() {
+    }
+}
+----
+<1> The cache name is implicitly set to `org.acme.CachedService`.
+<2> A unique default cache key derived from the cache name is generated and used.
+
+=== Explicit cache name and implicit simple cache key
+
+[source,java]
+----
+package org.acme.caching;
+
+import javax.enterprise.context.ApplicationScoped;
+
+import io.quarkus.cache.CacheInvalidate;
+import io.quarkus.cache.CacheInvalidateAll;
+import io.quarkus.cache.CacheLoad;
+import io.quarkus.cache.CacheStore;
+
+@ApplicationScoped
+public class CachedBean {
+
+    @CacheLoad(cacheName = "foo") <1>
+    public Object load(Object key) { <2>
+        // Call expensive service here.
+    }
+
+    @CacheStore(cacheName = "foo") <1>
+    public Object store(Object key) { <2>
+        // Call expensive service here.
+    }
+
+    @CacheInvalidate(cacheName = "foo") <1>
+    public void invalidate(Object key) { <2>
+    }
+
+    @CacheInvalidateAll(cacheName = "foo") <1>
+    public void invalidateAll() {
+    }
+}
+----
+<1> The cache name is explicitly set to `foo`.
+<2> The cache key is implicit since there's no `@CacheKey` annotation.
+
+=== Implicit cache name and explicit composite cache key
+
+[source,java]
+----
+package org.acme.caching;
+
+import javax.enterprise.context.Dependent;
+
+import io.quarkus.cache.CacheInvalidate;
+import io.quarkus.cache.CacheInvalidateAll;
+import io.quarkus.cache.CacheKey;
+import io.quarkus.cache.CacheLoad;
+import io.quarkus.cache.CacheStore;
+
+@Dependent
+public class CachedService {
+
+    @CacheLoad
+    public String load(@CacheKey Object keyElement1, @CacheKey Object keyElement2, Object notPartOfTheKey) { <1>
+        // Call expensive service here.
+    }
+
+    @CacheStore
+    public String store(@CacheKey Object keyElement1, @CacheKey Object keyElement2, Object notPartOfTheKey) { <1>
+        // Call expensive service here.
+    }
+
+    @CacheInvalidate
+    public void invalidate(@CacheKey Object keyElement1, @CacheKey Object keyElement2, Object notPartOfTheKey) { <1>
+    }
+
+    @CacheInvalidateAll
+    public void invalidateAll() {
+    }
+}
+----
+<1> The cache key is explicitly composed of two elements. The method signature also contains a third argument which is not part
+of the key.
