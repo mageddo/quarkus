@@ -480,6 +480,9 @@ public final class HibernateOrmProcessor {
                 }
 
                 // Caching
+                if (!hibernateConfig.useSecondLevelCache) {
+                    desc.getProperties().setProperty(AvailableSettings.USE_SECOND_LEVEL_CACHE, "false");
+                }
                 Map<String, String> cacheConfigEntries = HibernateConfigUtil
                         .getCacheConfigEntries(hibernateConfig);
                 for (Entry<String, String> entry : cacheConfigEntries.entrySet()) {
