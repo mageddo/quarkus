@@ -23,6 +23,9 @@ public class AugmentedCacheStoreInterceptor extends AugmentedCacheAnnotationInte
     @AroundInvoke
     public Object intercept(InvocationContext context) throws Exception {
         Object interceptedMethodResult = context.proceed();
+        if (interceptedMethodResult == null) {
+            throw new NullPointerException(NULL_VALUES_NOT_SUPPORTED_MSG);
+        }
         Cache cache = getCache(context, AugmentedCacheStore.class);
         Object key = getCacheKey(context, cache.getName());
         if (LOGGER.isDebugEnabled()) {

@@ -22,7 +22,11 @@ import javax.enterprise.util.Nonbinding;
  * This annotation can neither be used on a method returning {@code void} nor in combination with another Quarkus method
  * caching annotation.
  * <p>
- * The underlying cache provider can be chosen and configured in the Quarkus {@link application.properties} file.
+ * If a method annotated with {@link CacheLoad} is called and returns {@code null}, a {@code NullPointerException} will be
+ * thrown as null values are not supported by the cache. If you need to use this annotation on a method that may return null
+ * values, you should change the method return type and wrap its return value inside an {@link java.util.Optional Optional}.
+ * <p>
+ * The underlying caching provider can be chosen and configured in the Quarkus {@link application.properties} file.
  */
 @Retention(value = RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)

@@ -1,8 +1,5 @@
 package io.quarkus.cache.runtime.caffeine;
 
-import static io.quarkus.cache.runtime.NullValueConverter.fromCacheValue;
-import static io.quarkus.cache.runtime.NullValueConverter.toCacheValue;
-
 import java.time.Duration;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
@@ -52,12 +49,12 @@ public class CaffeineCache implements Cache {
 
     @Override
     public Object get(Object key, Callable<Object> mappingFunction) {
-        return fromCacheValue(cache.get(key, new MappingFunction(mappingFunction)));
+        return cache.get(key, new MappingFunction(mappingFunction));
     }
 
     @Override
     public void put(Object key, Object value) {
-        cache.put(key, toCacheValue(value));
+        cache.put(key, value);
     }
 
     @Override
@@ -106,9 +103,11 @@ public class CaffeineCache implements Cache {
         @Override
         public Object apply(Object unusedArg) {
             try {
-                return toCacheValue(mappingFunction.call());
+                return mappingFunction.call();
+            } catch (RuntimeException e) {
+                throw e;
             } catch (Exception e) {
-                throw new RuntimeException(e); // TODO: specific exception?
+                throw new RuntimeException(e);
             }
         }
     }

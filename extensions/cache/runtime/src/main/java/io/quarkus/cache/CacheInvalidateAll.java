@@ -16,7 +16,7 @@ import javax.enterprise.util.Nonbinding;
  * <p>
  * This annotation can't be used in combination with another Quarkus method caching annotation.
  * <p>
- * The underlying cache provider can be chosen and configured in the Quarkus {@link application.properties} file.
+ * The underlying caching provider can be chosen and configured in the Quarkus {@link application.properties} file.
  */
 @Retention(value = RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)

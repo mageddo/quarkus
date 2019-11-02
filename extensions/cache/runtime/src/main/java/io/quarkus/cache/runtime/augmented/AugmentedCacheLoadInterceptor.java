@@ -27,7 +27,13 @@ public class AugmentedCacheLoadInterceptor extends AugmentedCacheAnnotationInter
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debugf("Loading entry with key [%s] from cache [%s]", key, cache.getName());
         }
-        return cache.get(key, () -> context.proceed());
+        return cache.get(key, () -> {
+            Object interceptedMethodResult = context.proceed();
+            if (interceptedMethodResult == null) {
+                throw new NullPointerException(NULL_VALUES_NOT_SUPPORTED_MSG);
+            }
+            return interceptedMethodResult;
+        });
     }
 
     @Override

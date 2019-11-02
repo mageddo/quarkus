@@ -277,6 +277,12 @@ If a value is already present in the cache for the computed or generated key, it
 
 This annotation can neither be used on a method returning `void` nor in combination with another Quarkus method caching annotation.
 
+[TIP]
+====
+If a method annotated with `@CacheLoad` or `@CacheStore` is called and returns `null`, a `NullPointerException` will be thrown as null values are not supported by the cache.
+If you need to use this annotation on a method that may return null values, you should change the method return type and wrap its return value inside a `java.util.Optional`.
+====
+
 === @CacheInvalidate
 
 When a method annotated with `@CacheInvalidate` is invoked, Quarkus will compute a cache key from the method arguments (or generate a key if the method has no arguments)
