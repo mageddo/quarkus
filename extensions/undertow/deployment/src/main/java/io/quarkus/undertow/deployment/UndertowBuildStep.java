@@ -582,7 +582,7 @@ public class UndertowBuildStep {
                 }
                 ServletMappingMetaData servletMapping = new ServletMappingMetaData();
                 servletMapping.setServletName(servlet.getName());
-                List<String> urlPatterns = new ArrayList<String>();
+                List<String> urlPatterns = new ArrayList<>();
                 AnnotationValue urlPatternsValue = annotation.value("urlPatterns");
                 if (urlPatternsValue != null) {
                     for (String urlPattern : urlPatternsValue.asStringArray()) {
@@ -647,9 +647,9 @@ public class UndertowBuildStep {
                 filters.add(filter);
                 FilterMappingMetaData filterMapping = new FilterMappingMetaData();
                 filterMapping.setFilterName(filter.getName());
-                List<String> urlPatterns = new ArrayList<String>();
-                List<String> servletNames = new ArrayList<String>();
-                List<DispatcherType> dispatchers = new ArrayList<DispatcherType>();
+                List<String> urlPatterns = new ArrayList<>();
+                List<String> servletNames = new ArrayList<>();
+                List<DispatcherType> dispatchers = new ArrayList<>();
                 AnnotationValue urlPatternsValue = annotation.value("urlPatterns");
                 if (urlPatternsValue != null) {
                     for (String urlPattern : urlPatternsValue.asStringArray()) {
@@ -808,7 +808,7 @@ public class UndertowBuildStep {
                 }
                 ServletSecurityMetaData servletSecurity = new ServletSecurityMetaData();
                 AnnotationValue httpConstraintValue = annotation.value();
-                List<String> rolesAllowed = new ArrayList<String>();
+                List<String> rolesAllowed = new ArrayList<>();
                 if (httpConstraintValue != null) {
                     AnnotationInstance httpConstraint = httpConstraintValue.asNested();
                     AnnotationValue httpConstraintERSValue = httpConstraint.value();
@@ -831,7 +831,7 @@ public class UndertowBuildStep {
                 if (httpMethodConstraintsValue != null) {
                     AnnotationInstance[] httpMethodConstraints = httpMethodConstraintsValue.asNestedArray();
                     if (httpMethodConstraints.length > 0) {
-                        List<HttpMethodConstraintMetaData> methodConstraints = new ArrayList<HttpMethodConstraintMetaData>();
+                        List<HttpMethodConstraintMetaData> methodConstraints = new ArrayList<>();
                         for (AnnotationInstance httpMethodConstraint : httpMethodConstraints) {
                             HttpMethodConstraintMetaData methodConstraint = new HttpMethodConstraintMetaData();
                             AnnotationValue httpMethodConstraintValue = httpMethodConstraint.value();
@@ -849,7 +849,7 @@ public class UndertowBuildStep {
                                         TransportGuaranteeType.valueOf(httpMethodConstraintTGValue.asEnum()));
                             }
                             AnnotationValue rolesAllowedValue = httpMethodConstraint.value("rolesAllowed");
-                            rolesAllowed = new ArrayList<String>();
+                            rolesAllowed = new ArrayList<>();
                             if (rolesAllowedValue != null) {
                                 for (String role : rolesAllowedValue.asStringArray()) {
                                     rolesAllowed.add(role);

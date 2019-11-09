@@ -2,6 +2,7 @@ package io.quarkus.hibernate.orm.runtime.service;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.lang.reflect.InvocationHandler;
 import java.net.URL;
 import java.util.ArrayList;
@@ -78,14 +79,14 @@ public class FlatClassLoaderService implements ClassLoaderService {
             }
             return resource;
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
     }
 
     @Override
     public <S> Collection<S> loadJavaServices(Class<S> serviceContract) {
         ServiceLoader<S> serviceLoader = ServiceLoader.load(serviceContract, getClassLoader());
-        final LinkedHashSet<S> services = new LinkedHashSet<S>();
+        final LinkedHashSet<S> services = new LinkedHashSet<>();
         for (S service : serviceLoader) {
             services.add(service);
         }

@@ -64,7 +64,7 @@ public class VertxUtil {
     }
 
     static Map<String, Cookie> extractCookies(MultivaluedMap<String, String> headers) {
-        Map<String, Cookie> cookies = new HashMap<String, Cookie>();
+        Map<String, Cookie> cookies = new HashMap<>();
         List<String> cookieHeaders = headers.get("Cookie");
         if (cookieHeaders == null)
             return cookies;
@@ -78,7 +78,7 @@ public class VertxUtil {
     }
 
     public static List<MediaType> extractAccepts(MultivaluedMap<String, String> requestHeaders) {
-        List<MediaType> acceptableMediaTypes = new ArrayList<MediaType>();
+        List<MediaType> acceptableMediaTypes = new ArrayList<>();
         List<String> accepts = requestHeaders.get(HttpHeaderNames.ACCEPT);
         if (accepts == null)
             return acceptableMediaTypes;
@@ -90,7 +90,7 @@ public class VertxUtil {
     }
 
     public static List<String> extractLanguages(MultivaluedMap<String, String> requestHeaders) {
-        List<String> acceptable = new ArrayList<String>();
+        List<String> acceptable = new ArrayList<>();
         List<String> accepts = requestHeaders.get(HttpHeaderNames.ACCEPT_LANGUAGE);
         if (accepts == null)
             return acceptable;
@@ -104,7 +104,7 @@ public class VertxUtil {
     }
 
     public static MultivaluedMap<String, String> extractRequestHeaders(HttpServerRequest request) {
-        Headers<String> requestHeaders = new Headers<String>();
+        Headers<String> requestHeaders = new Headers<>();
 
         for (Map.Entry<String, String> header : request.headers()) {
             requestHeaders.add(header.getKey(), header.getValue());

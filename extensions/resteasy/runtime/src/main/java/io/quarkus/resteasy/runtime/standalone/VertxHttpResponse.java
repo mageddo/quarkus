@@ -33,7 +33,7 @@ public class VertxHttpResponse implements HttpResponse {
 
     public VertxHttpResponse(HttpServerRequest request, ResteasyProviderFactory providerFactory,
             final HttpMethod method, BufferAllocator allocator, VertxOutput output) {
-        outputHeaders = new MultivaluedMapImpl<String, Object>();
+        outputHeaders = new MultivaluedMapImpl<>();
         this.method = method;
         os = (method == null || !method.equals(HttpMethod.HEAD)) ? new VertxOutputStream(this, allocator)
                 : null;

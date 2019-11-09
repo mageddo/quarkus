@@ -2,6 +2,7 @@ package io.quarkus.amazon.lambda.test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Map;
@@ -78,7 +79,7 @@ public class LambdaResourceManager implements QuarkusTestResourceLifecycleManage
                             LambdaClient.REQUESTS.get(id).completeExceptionally(
                                     new LambdaException(result.getErrorType(), result.getErrorMessage()));
                         } catch (IOException e) {
-                            throw new RuntimeException(e);
+                            throw new UncheckedIOException(e);
                         }
                     }
                 });
@@ -103,7 +104,7 @@ public class LambdaResourceManager implements QuarkusTestResourceLifecycleManage
                         e.getValue().completeExceptionally(LambdaClient.problem);
                     }
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw new UncheckedIOException(e);
                 }
             }
         });

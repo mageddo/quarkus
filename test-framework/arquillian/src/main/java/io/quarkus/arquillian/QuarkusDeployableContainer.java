@@ -1,6 +1,7 @@
 package io.quarkus.arquillian;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URLClassLoader;
@@ -116,7 +117,7 @@ public class QuarkusDeployableContainer implements DeployableContainer<QuarkusCo
                                 } catch (FileAlreadyExistsException faee) {
                                     // Do Nothing
                                 } catch (IOException e) {
-                                    throw new RuntimeException(e);
+                                    throw new UncheckedIOException(e);
                                 }
                             });
                         }

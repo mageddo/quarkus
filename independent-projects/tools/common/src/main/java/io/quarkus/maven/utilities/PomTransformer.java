@@ -3,6 +3,7 @@ package io.quarkus.maven.utilities;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -78,13 +79,13 @@ public class PomTransformer {
             try {
                 return new String(Files.readAllBytes(path), charset);
             } catch (IOException e) {
-                throw new RuntimeException(String.format("Could not read DOM from [%s]", path), e);
+                throw new UncheckedIOException(String.format("Could not read DOM from [%s]", path), e);
             }
         }, xml -> {
             try {
                 Files.write(path, xml.getBytes(charset));
             } catch (IOException e) {
-                throw new RuntimeException(String.format("Could not write DOM from [%s]", path), e);
+                throw new UncheckedIOException(String.format("Could not write DOM from [%s]", path), e);
             }
         });
     }

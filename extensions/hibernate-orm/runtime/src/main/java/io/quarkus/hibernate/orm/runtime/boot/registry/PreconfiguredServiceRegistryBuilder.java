@@ -58,7 +58,7 @@ public class PreconfiguredServiceRegistryBuilder {
 
     private final Map configurationValues = new HashMap();
     private final List<StandardServiceInitiator> initiators;
-    private final List<ProvidedService> providedServices = new ArrayList<ProvidedService>();
+    private final List<ProvidedService> providedServices = new ArrayList<>();
     private final Collection<Integrator> integrators;
     private final StandardServiceRegistryImpl destroyedRegistry;
 
@@ -135,7 +135,7 @@ public class PreconfiguredServiceRegistryBuilder {
      * @return
      */
     private static List<StandardServiceInitiator> buildQuarkusServiceInitiatorList(RecordedState rs) {
-        final ArrayList<StandardServiceInitiator> serviceInitiators = new ArrayList<StandardServiceInitiator>();
+        final ArrayList<StandardServiceInitiator> serviceInitiators = new ArrayList<>();
 
         // Replaces org.hibernate.boot.cfgxml.internal.CfgXmlAccessServiceInitiator :
         // not used

@@ -1,6 +1,7 @@
 package io.quarkus.platform.descriptor.loader.json.impl;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,7 +25,7 @@ public class QuarkusJsonPlatformDescriptorLoaderImpl
                                 .setPropertyNamingStrategy(PropertyNamingStrategy.KEBAB_CASE);
                         return mapper.readValue(is, QuarkusJsonPlatformDescriptor.class);
                     } catch (IOException e) {
-                        throw new RuntimeException("Failed to parse JSON stream", e);
+                        throw new UncheckedIOException("Failed to parse JSON stream", e);
                     }
                 });
 

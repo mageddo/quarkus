@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -237,7 +238,7 @@ public class ApplicationArchiveBuildStep {
                     try (FileInputStream in = new FileInputStream(path1.toFile())) {
                         indexer.index(in);
                     } catch (IOException e) {
-                        throw new RuntimeException(e);
+                        throw new UncheckedIOException(e);
                     }
                 }
             });
@@ -266,7 +267,7 @@ public class ApplicationArchiveBuildStep {
                     }
                     return indexJar(file);
                 } catch (IOException e) {
-                    throw new RuntimeException("Failed to process " + path, e);
+                    throw new UncheckedIOException("Failed to process " + path, e);
                 }
             }
         });

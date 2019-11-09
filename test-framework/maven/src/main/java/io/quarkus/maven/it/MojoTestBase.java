@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UncheckedIOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -96,7 +97,7 @@ public class MojoTestBase {
         try {
             org.codehaus.plexus.util.FileUtils.copyDirectoryStructure(in, out);
         } catch (IOException e) {
-            throw new RuntimeException("Cannot copy project resources", e);
+            throw new UncheckedIOException("Cannot copy project resources", e);
         }
         filterPom(out);
 

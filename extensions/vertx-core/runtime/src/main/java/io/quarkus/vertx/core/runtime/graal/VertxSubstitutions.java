@@ -69,97 +69,97 @@ final class Target_io_vertx_core_eventbus_impl_clustered_ClusteredEventBusCluste
 
     @Substitute
     private NetServerOptions getServerOptions() {
-        throw new RuntimeException("Not Implemented");
+        throw new UnsupportedOperationException("Not Implemented");
     }
 
     @Substitute
     static void setCertOptions(TCPSSLOptions options, KeyCertOptions keyCertOptions) {
-        throw new RuntimeException("Not Implemented");
+        throw new UnsupportedOperationException("Not Implemented");
     }
 
     @Substitute
     static void setTrustOptions(TCPSSLOptions sslOptions, TrustOptions options) {
-        throw new RuntimeException("Not Implemented");
+        throw new UnsupportedOperationException("Not Implemented");
     }
 
     @Substitute
     public void start(Handler<AsyncResult<Void>> resultHandler) {
-        throw new RuntimeException("Not Implemented");
+        throw new UnsupportedOperationException("Not Implemented");
     }
 
     @Substitute
     public void close(Handler<AsyncResult<Void>> completionHandler) {
-        throw new RuntimeException("Not Implemented");
+        throw new UnsupportedOperationException("Not Implemented");
 
     }
 
     @Substitute
     public MessageImpl createMessage(boolean send, String address, MultiMap headers, Object body, String codecName,
             Handler<AsyncResult<Void>> writeHandler) {
-        throw new RuntimeException("Not Implemented");
+        throw new UnsupportedOperationException("Not Implemented");
     }
 
     @Substitute
     protected <T> void addRegistration(boolean newAddress, String address,
             boolean replyHandler, boolean localOnly,
             Handler<AsyncResult<Void>> completionHandler) {
-        throw new RuntimeException("Not Implemented");
+        throw new UnsupportedOperationException("Not Implemented");
     }
 
     @Substitute
     protected <T> void removeRegistration(HandlerHolder<T> lastHolder, String address,
             Handler<AsyncResult<Void>> completionHandler) {
-        throw new RuntimeException("Not Implemented");
+        throw new UnsupportedOperationException("Not Implemented");
     }
 
     @Substitute
     protected String generateReplyAddress() {
-        throw new RuntimeException("Not Implemented");
+        throw new UnsupportedOperationException("Not Implemented");
     }
 
     @Substitute
     protected boolean isMessageLocal(MessageImpl msg) {
-        throw new RuntimeException("Not Implemented");
+        throw new UnsupportedOperationException("Not Implemented");
     }
 
     @Substitute
     private void setClusterViewChangedHandler(HAManager haManager) {
-        throw new RuntimeException("Not Implemented");
+        throw new UnsupportedOperationException("Not Implemented");
     }
 
     @Substitute
     private int getClusterPublicPort(EventBusOptions options, int actualPort) {
-        throw new RuntimeException("Not Implemented");
+        throw new UnsupportedOperationException("Not Implemented");
     }
 
     @Substitute
     private String getClusterPublicHost(EventBusOptions options) {
-        throw new RuntimeException("Not Implemented");
+        throw new UnsupportedOperationException("Not Implemented");
     }
 
     @Substitute
     private Handler<NetSocket> getServerHandler() {
-        throw new RuntimeException("Not Implemented");
+        throw new UnsupportedOperationException("Not Implemented");
     }
 
     @Substitute
     private void sendRemote(ServerID theServerID, MessageImpl message) {
-        throw new RuntimeException("Not Implemented");
+        throw new UnsupportedOperationException("Not Implemented");
     }
 
     @Substitute
     private void removeSub(String subName, ClusterNodeInfo node, Handler<AsyncResult<Void>> completionHandler) {
-        throw new RuntimeException("Not Implemented");
+        throw new UnsupportedOperationException("Not Implemented");
     }
 
     @Substitute
     VertxInternal vertx() {
-        throw new RuntimeException("Not Implemented");
+        throw new UnsupportedOperationException("Not Implemented");
     }
 
     @Substitute
     EventBusOptions options() {
-        throw new RuntimeException("Not Implemented");
+        throw new UnsupportedOperationException("Not Implemented");
     }
 }
 

@@ -8,6 +8,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.nio.file.FileVisitResult;
@@ -399,7 +400,7 @@ public class QuarkusUnitTest
             }
             return this;
         } catch (IOException e) {
-            throw new RuntimeException("Could not load resource: '" + resourceName + "'");
+            throw new UncheckedIOException("Could not load resource: '" + resourceName + "'", e);
         }
     }
 
@@ -424,7 +425,7 @@ public class QuarkusUnitTest
             try {
                 props.store(outputStream, "Unit test Generated Application properties");
             } catch (IOException e) {
-                throw new RuntimeException("Could not write application properties resource", e);
+                throw new UncheckedIOException("Could not write application properties resource", e);
             }
             return new ByteArrayInputStream(outputStream.toByteArray());
         }

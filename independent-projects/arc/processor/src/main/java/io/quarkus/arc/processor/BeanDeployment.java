@@ -820,7 +820,7 @@ public class BeanDeployment {
 
             @Override
             public <T> BeanConfigurator<T> configure(DotName beanClassName) {
-                return new BeanConfigurator<T>(beanClassName, BeanDeployment.this, beans::add);
+                return new BeanConfigurator<>(beanClassName, BeanDeployment.this, beans::add);
             }
 
             @Override
@@ -930,7 +930,7 @@ public class BeanDeployment {
 
         public ValidationContextImpl(BuildContext buildContext) {
             this.buildContext = buildContext;
-            this.errors = new ArrayList<Throwable>();
+            this.errors = new ArrayList<>();
         }
 
         @Override

@@ -21,8 +21,8 @@ public class ObjectMapperSerde<T> implements Serde<T> {
     }
 
     public ObjectMapperSerde(Class<T> type, ObjectMapper objectMapper) {
-        this.serializer = new ObjectMapperSerializer<T>(objectMapper);
-        this.deserializer = new ObjectMapperDeserializer<T>(type, objectMapper);
+        this.serializer = new ObjectMapperSerializer<>(objectMapper);
+        this.deserializer = new ObjectMapperDeserializer<>(type, objectMapper);
     }
 
     @Override

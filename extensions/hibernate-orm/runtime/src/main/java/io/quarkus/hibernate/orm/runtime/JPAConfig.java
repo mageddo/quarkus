@@ -28,7 +28,7 @@ public class JPAConfig {
     public JPAConfig() {
         this.jtaEnabled = new AtomicBoolean();
         this.persistenceUnits = new ConcurrentHashMap<>();
-        this.defaultPersistenceUnitName = new AtomicReference<String>();
+        this.defaultPersistenceUnitName = new AtomicReference<>();
     }
 
     void setJtaEnabled(boolean value) {

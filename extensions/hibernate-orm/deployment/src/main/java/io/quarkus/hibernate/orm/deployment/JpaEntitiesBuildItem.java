@@ -15,8 +15,8 @@ import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
  */
 public final class JpaEntitiesBuildItem extends SimpleBuildItem {
 
-    private final Set<String> entityClassNames = new HashSet<String>();
-    private final Set<String> allModelClassNames = new HashSet<String>();
+    private final Set<String> entityClassNames = new HashSet<>();
+    private final Set<String> allModelClassNames = new HashSet<>();
 
     void addEntityClass(final String className) {
         entityClassNames.add(className);

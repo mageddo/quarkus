@@ -105,7 +105,7 @@ public final class BuildResult {
     /**
      * Close all the resultant resources, logging any failures.
      */
-    public void closeAll() throws RuntimeException {
+    public void closeAll() {
         for (BuildItem obj : simpleItems.values()) {
             if (obj instanceof AutoCloseable)
                 try {

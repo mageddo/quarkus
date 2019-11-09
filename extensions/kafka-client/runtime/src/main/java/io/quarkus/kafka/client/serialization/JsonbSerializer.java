@@ -2,6 +2,7 @@ package io.quarkus.kafka.client.serialization;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.Map;
 
 import javax.json.bind.Jsonb;
@@ -39,7 +40,7 @@ public class JsonbSerializer<T> implements Serializer<T> {
             jsonb.toJson(data, output);
             return output.toByteArray();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
     }
 

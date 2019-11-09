@@ -4,6 +4,7 @@ import static io.quarkus.deployment.annotations.ExecutionTime.RUNTIME_INIT;
 import static io.quarkus.deployment.annotations.ExecutionTime.STATIC_INIT;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -542,7 +543,7 @@ public final class HibernateOrmProcessor {
                 byte[] enhanced = hibernateEntityEnhancer.enhance(className, bytes);
                 additionalClasses.produce(new GeneratedClassBuildItem(true, className, enhanced != null ? enhanced : bytes));
             } catch (IOException e) {
-                throw new RuntimeException("Failed to read Model class", e);
+                throw new UncheckedIOException("Failed to read Model class", e);
             }
         }
     }

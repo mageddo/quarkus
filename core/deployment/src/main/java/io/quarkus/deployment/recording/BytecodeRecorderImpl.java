@@ -233,7 +233,7 @@ public class BytecodeRecorderImpl implements RecorderContext {
                 .setAnchorClass(getClass())
                 .setProxyNameSuffix(proxyNameSuffix);
         String proxyName = proxyConfiguration.getProxyName();
-        ProxyFactory<T> factory = new ProxyFactory<T>(proxyConfiguration);
+        ProxyFactory<T> factory = new ProxyFactory<>(proxyConfiguration);
         try {
             T recordingProxy = factory.newInstance(new InvocationHandler() {
                 @Override

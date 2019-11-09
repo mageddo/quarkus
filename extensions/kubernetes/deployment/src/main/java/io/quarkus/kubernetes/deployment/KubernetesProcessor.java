@@ -2,6 +2,7 @@ package io.quarkus.kubernetes.deployment;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -81,7 +82,7 @@ class KubernetesProcessor {
         try {
             root = Files.createTempDirectory("quarkus-kubernetes");
         } catch (IOException e) {
-            throw new RuntimeException("Unable to setup environment for generating Kubernetes resources", e);
+            throw new UncheckedIOException("Unable to setup environment for generating Kubernetes resources", e);
         }
 
         Config config = ConfigProvider.getConfig();

@@ -3,6 +3,7 @@ package io.quarkus.undertow.runtime;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UncheckedIOException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -124,7 +125,7 @@ public class KnownPathResourceManager implements ResourceManager {
                     try {
                         ret.add(underlying.getResource(i));
                     } catch (IOException e) {
-                        throw new RuntimeException(e);
+                        throw new UncheckedIOException(e);
                     }
                 } else {
                     break;

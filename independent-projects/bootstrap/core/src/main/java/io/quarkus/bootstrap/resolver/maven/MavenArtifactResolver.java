@@ -323,7 +323,7 @@ public class MavenArtifactResolver {
             originalDeps.add(dep);
         }
 
-        final List<Dependency> mergedManagedDeps = new ArrayList<Dependency>(managedDeps.size() + descr.getManagedDependencies().size());
+        final List<Dependency> mergedManagedDeps = new ArrayList<>(managedDeps.size() + descr.getManagedDependencies().size());
         Map<AppArtifactKey, String> managedVersions = Collections.emptyMap();
         if(!managedDeps.isEmpty()) {
             managedVersions = new HashMap<>(managedDeps.size());
@@ -376,8 +376,8 @@ public class MavenArtifactResolver {
         if(initialCapacity == 0) {
             return Collections.emptyList();
         }
-        final List<Dependency> result = new ArrayList<Dependency>(initialCapacity);
-        final Set<AppArtifactKey> ids = new HashSet<AppArtifactKey>(initialCapacity, 1.0f);
+        final List<Dependency> result = new ArrayList<>(initialCapacity);
+        final Set<AppArtifactKey> ids = new HashSet<>(initialCapacity, 1.0f);
         for (Dependency dependency : dominant) {
             final AppArtifactKey id = getId(dependency.getArtifact());
             ids.add(id);

@@ -58,7 +58,7 @@ public final class RecordableBootstrap extends StandardServiceRegistryBuilder {
 
     private final Map settings;
     private final List<StandardServiceInitiator> initiators = standardInitiatorList();
-    private final List<ProvidedService> providedServices = new ArrayList<ProvidedService>();
+    private final List<ProvidedService> providedServices = new ArrayList<>();
     private final List<Class<? extends Service>> postBuildProvidedServices = new ArrayList<>();
 
     private boolean autoCloseRegistry = true;
@@ -89,7 +89,7 @@ public final class RecordableBootstrap extends StandardServiceRegistryBuilder {
     // WARNING: this is a customized list: we started from a copy of ORM's standard
     // list, then changes have evolved.
     private static List<StandardServiceInitiator> standardInitiatorList() {
-        final ArrayList<StandardServiceInitiator> serviceInitiators = new ArrayList<StandardServiceInitiator>();
+        final ArrayList<StandardServiceInitiator> serviceInitiators = new ArrayList<>();
 
         serviceInitiators.add(CfgXmlAccessServiceInitiator.INSTANCE);
         serviceInitiators.add(ConfigurationServiceInitiator.INSTANCE);

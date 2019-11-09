@@ -352,7 +352,7 @@ public class ArcContainerImpl implements ArcContainer {
             }
 
             try {
-                return new InstanceHandleImpl<T>(bean, bean.get(creationalContext), creationalContext, parentContext);
+                return new InstanceHandleImpl<>(bean, bean.get(creationalContext), creationalContext, parentContext);
             } finally {
                 if (resetCurrentInjectionPoint) {
                     InjectionPointProvider.set(prev);

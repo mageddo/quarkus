@@ -2,6 +2,7 @@ package io.quarkus.undertow.deployment;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -123,7 +124,7 @@ public class WebXmlParsingBuildStep {
                 } catch (XMLStreamException e) {
                     throw new RuntimeException("Failed to parse " + webFragment + " " + e.getLocation(), e);
                 } catch (IOException e) {
-                    throw new RuntimeException("Failed to parse " + webFragment, e);
+                    throw new UncheckedIOException("Failed to parse " + webFragment, e);
                 }
             }
         }

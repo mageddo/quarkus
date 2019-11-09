@@ -101,7 +101,7 @@ abstract class AbstractInvocationContext implements ArcInvocationContext, Suppli
 
     @Override
     public Map<String, Object> get() {
-        Map<String, Object> result = new HashMap<String, Object>();
+        Map<String, Object> result = new HashMap<>();
         result.put(ArcInvocationContext.KEY_INTERCEPTOR_BINDINGS, interceptorBindings);
         return result;
     }

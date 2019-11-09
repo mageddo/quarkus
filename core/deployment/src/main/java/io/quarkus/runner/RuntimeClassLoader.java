@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -88,7 +89,7 @@ public class RuntimeClassLoader extends ClassLoader implements ClassOutput, Tran
             this.applicationClasses = applicationClasses;
 
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
         this.applicationClassDirectories = applicationClassesDirectories;
         this.frameworkClassesPath = frameworkClassesDirectory;
@@ -263,7 +264,7 @@ public class RuntimeClassLoader extends ClassLoader implements ClassOutput, Tran
                     out.write(data);
                 }
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new UncheckedIOException(e);
             }
         }
     }
@@ -303,7 +304,7 @@ public class RuntimeClassLoader extends ClassLoader implements ClassOutput, Tran
                 }
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
     }
 

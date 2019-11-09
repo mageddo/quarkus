@@ -120,7 +120,7 @@ public final class ConfigPatternMap<T> implements Iterable<T> {
     }
 
     public PatternIterator<T> iterator() {
-        return new PatternIterator<T>(children, this);
+        return new PatternIterator<>(children, this);
     }
 
     public void addChild(final String childName, final ConfigPatternMap<T> child) {

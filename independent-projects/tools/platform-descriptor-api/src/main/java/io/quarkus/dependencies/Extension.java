@@ -50,7 +50,7 @@ public class Extension {
 
 
 
-    private Map<String, Object> metadata = new HashMap<String, Object>(3);
+    private Map<String, Object> metadata = new HashMap<>(3);
 
     public Extension() {
         // Use by mapper.

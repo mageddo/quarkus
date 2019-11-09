@@ -100,7 +100,7 @@ public class InjectionPointInfo {
                 requiredQualifiers.isEmpty()
                         ? Collections.singleton(AnnotationInstance.create(DotNames.DEFAULT, null, Collections.emptyList()))
                         : requiredQualifiers);
-        this.resolvedBean = new AtomicReference<BeanInfo>(null);
+        this.resolvedBean = new AtomicReference<>(null);
         this.kind = kind;
         this.hasDefaultedQualifier = requiredQualifiers.isEmpty();
         this.target = target;

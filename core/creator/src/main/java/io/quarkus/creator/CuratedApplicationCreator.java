@@ -1,6 +1,7 @@
 package io.quarkus.creator;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -52,7 +53,7 @@ public class CuratedApplicationCreator implements AutoCloseable {
             try {
                 this.workDir = Files.createTempDirectory("quarkus-build");
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new UncheckedIOException(e);
             }
             del = true;
         }

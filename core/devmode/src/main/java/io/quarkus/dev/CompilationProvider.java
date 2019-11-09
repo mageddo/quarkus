@@ -50,7 +50,7 @@ public interface CompilationProvider {
             this.sourceDirectory = sourceDirectory;
             this.outputDirectory = outputDirectory;
             this.sourceEncoding = sourceEncoding == null ? StandardCharsets.UTF_8 : Charset.forName(sourceEncoding);
-            this.compilerOptions = compilerOptions == null ? new ArrayList<String>() : compilerOptions;
+            this.compilerOptions = compilerOptions == null ? new ArrayList<>() : compilerOptions;
             this.sourceJavaVersion = sourceJavaVersion;
             this.targetJvmVersion = targetJvmVersion;
         }

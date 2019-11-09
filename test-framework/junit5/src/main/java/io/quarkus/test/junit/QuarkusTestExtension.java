@@ -8,6 +8,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UncheckedIOException;
 import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -271,7 +272,7 @@ public class QuarkusTestExtension
             shutdownTasks.add(new DeleteRunnable(createdFilesPath));
             return new ExtensionState(testResourceManager, shutdownTask, false);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
     }
 

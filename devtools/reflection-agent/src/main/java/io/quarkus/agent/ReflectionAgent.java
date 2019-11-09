@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UncheckedIOException;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.nio.charset.StandardCharsets;
@@ -80,7 +81,7 @@ public class ReflectionAgent {
                     return null;
 
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw new UncheckedIOException(e);
                 }
             }
         });
@@ -114,7 +115,7 @@ public class ReflectionAgent {
                     known.add(line);
                 }
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new UncheckedIOException(e);
             }
             KNOWN_CLASSES = Collections.unmodifiableSet(known);
         }

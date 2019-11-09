@@ -2,6 +2,7 @@ package io.quarkus.infinispan.embedded.runtime;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -44,7 +45,7 @@ public class InfinispanEmbeddedProducer {
                 }
                 return new DefaultCacheManager(configHolder, true);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new UncheckedIOException(e);
             }
         }
         return new DefaultCacheManager();

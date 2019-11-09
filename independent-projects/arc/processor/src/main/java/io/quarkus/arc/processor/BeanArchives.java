@@ -112,7 +112,7 @@ public final class BeanArchives {
             if (additionalClasses.isEmpty()) {
                 return index.getKnownDirectSubclasses(className);
             }
-            Set<ClassInfo> directSubclasses = new HashSet<ClassInfo>(index.getKnownDirectSubclasses(className));
+            Set<ClassInfo> directSubclasses = new HashSet<>(index.getKnownDirectSubclasses(className));
             for (Optional<ClassInfo> additional : additionalClasses.values()) {
                 if (additional.isPresent() && className.equals(additional.get().superName())) {
                     directSubclasses.add(additional.get());
@@ -126,8 +126,8 @@ public final class BeanArchives {
             if (additionalClasses.isEmpty()) {
                 return index.getAllKnownSubclasses(className);
             }
-            final Set<ClassInfo> allKnown = new HashSet<ClassInfo>();
-            final Set<DotName> processedClasses = new HashSet<DotName>();
+            final Set<ClassInfo> allKnown = new HashSet<>();
+            final Set<DotName> processedClasses = new HashSet<>();
             getAllKnownSubClasses(className, allKnown, processedClasses);
             return allKnown;
         }
@@ -137,7 +137,7 @@ public final class BeanArchives {
             if (additionalClasses.isEmpty()) {
                 return index.getKnownDirectImplementors(className);
             }
-            Set<ClassInfo> directImplementors = new HashSet<ClassInfo>(index.getKnownDirectImplementors(className));
+            Set<ClassInfo> directImplementors = new HashSet<>(index.getKnownDirectImplementors(className));
             for (Optional<ClassInfo> additional : additionalClasses.values()) {
                 if (!additional.isPresent()) {
                     continue;
@@ -157,9 +157,9 @@ public final class BeanArchives {
             if (additionalClasses.isEmpty()) {
                 return index.getAllKnownImplementors(interfaceName);
             }
-            final Set<ClassInfo> allKnown = new HashSet<ClassInfo>();
-            final Set<DotName> subInterfacesToProcess = new HashSet<DotName>();
-            final Set<DotName> processedClasses = new HashSet<DotName>();
+            final Set<ClassInfo> allKnown = new HashSet<>();
+            final Set<DotName> subInterfacesToProcess = new HashSet<>();
+            final Set<DotName> processedClasses = new HashSet<>();
             subInterfacesToProcess.add(interfaceName);
             while (!subInterfacesToProcess.isEmpty()) {
                 final Iterator<DotName> toProcess = subInterfacesToProcess.iterator();
@@ -177,7 +177,7 @@ public final class BeanArchives {
         }
 
         private void getAllKnownSubClasses(DotName className, Set<ClassInfo> allKnown, Set<DotName> processedClasses) {
-            final Set<DotName> subClassesToProcess = new HashSet<DotName>();
+            final Set<DotName> subClassesToProcess = new HashSet<>();
             subClassesToProcess.add(className);
             while (!subClassesToProcess.isEmpty()) {
                 final Iterator<DotName> toProcess = subClassesToProcess.iterator();

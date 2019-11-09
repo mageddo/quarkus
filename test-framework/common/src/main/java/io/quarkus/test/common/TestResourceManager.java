@@ -4,6 +4,7 @@ import static io.quarkus.test.common.PathTestHelper.getTestClassesLocation;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
@@ -141,7 +142,7 @@ public class TestResourceManager {
                 }
             }
         } catch (IOException e) {
-            throw new RuntimeException("Unable to index the test-classes/ directory.", e);
+            throw new UncheckedIOException("Unable to index the test-classes/ directory.", e);
         }
         return indexer.complete();
     }

@@ -40,7 +40,7 @@ import io.netty.util.concurrent.SingleThreadEventExecutor;
 public class VirtualServerChannel extends AbstractServerChannel {
 
     private final ChannelConfig config = new DefaultChannelConfig(this);
-    private final Queue<Object> inboundBuffer = new ArrayDeque<Object>();
+    private final Queue<Object> inboundBuffer = new ArrayDeque<>();
     private final Runnable shutdownHook = new Runnable() {
         @Override
         public void run() {

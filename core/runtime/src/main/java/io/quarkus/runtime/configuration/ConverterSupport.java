@@ -89,7 +89,7 @@ public class ConverterSupport {
         }
         final Class<T> convertedType = (Class<T>) genericType;
         final int priority = getConverterPriority(converterClass);
-        return new ConverterItem<T>(convertedType, converter, priority);
+        return new ConverterItem<>(convertedType, converter, priority);
     }
 
     /**

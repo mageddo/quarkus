@@ -5,6 +5,7 @@ import static java.lang.String.format;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -115,7 +116,7 @@ public class SwaggerUiProcessor {
                     cached.cachedDirectory = tempDir.toAbsolutePath().toString();
                     cached.cachedOpenAPIPath = openApiPath;
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw new UncheckedIOException(e);
                 }
             }
             Handler<RoutingContext> handler = recorder.handler(cached.cachedDirectory, swaggerUiConfig.path);

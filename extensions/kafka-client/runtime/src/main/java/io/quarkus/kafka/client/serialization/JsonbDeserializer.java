@@ -3,6 +3,7 @@ package io.quarkus.kafka.client.serialization;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.util.Map;
 
 import javax.json.bind.Jsonb;
@@ -45,7 +46,7 @@ public class JsonbDeserializer<T> implements Deserializer<T> {
         try (InputStream is = new ByteArrayInputStream(data)) {
             return jsonb.fromJson(is, type);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
     }
 

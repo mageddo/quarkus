@@ -31,8 +31,8 @@ public class JsonbSerde<T> implements Serde<T> {
         this.jsonb = jsonb;
         this.jsonbNeedsClosing = jsonbNeedsClosing;
 
-        this.serializer = new JsonbSerializer<T>(jsonb);
-        this.deserializer = new JsonbDeserializer<T>(type, jsonb);
+        this.serializer = new JsonbSerializer<>(jsonb);
+        this.deserializer = new JsonbDeserializer<>(type, jsonb);
     }
 
     @Override

@@ -3,6 +3,7 @@ package io.quarkus.dev;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -64,7 +65,7 @@ public class JavaCompilationProvider implements CompilationProvider {
                         diagnostic.getSource() == null ? "[unknown source]" : diagnostic.getSource().getName());
             }
         } catch (IOException e) {
-            throw new RuntimeException("Cannot close file manager", e);
+            throw new UncheckedIOException("Cannot close file manager", e);
         }
     }
 
@@ -77,7 +78,7 @@ public class JavaCompilationProvider implements CompilationProvider {
             reader.accept(visitor, 0);
             sourceFilePath = visitor.getSourceFileForClass(classFilePath);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
         return sourceFilePath;
     }

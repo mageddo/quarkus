@@ -2,6 +2,7 @@ package io.quarkus.resteasy.runtime.standalone;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
@@ -110,7 +111,7 @@ public final class VertxHttpRequest extends BaseHttpRequest {
     @Override
     public void setAttribute(String name, Object value) {
         if (attributes == null) {
-            attributes = new HashMap<String, Object>();
+            attributes = new HashMap<>();
         }
         attributes.put(name, value);
     }
@@ -309,7 +310,7 @@ public final class VertxHttpRequest extends BaseHttpRequest {
                 try {
                     vertxResponse.finish();
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw new UncheckedIOException(e);
                 }
             }
 

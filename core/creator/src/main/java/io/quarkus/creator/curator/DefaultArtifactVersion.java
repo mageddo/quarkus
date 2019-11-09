@@ -109,7 +109,7 @@ public class DefaultArtifactVersion implements Comparable<DefaultArtifactVersion
     }
 
     private static Item[] parse(String version) {
-        final List<Item> items = new ArrayList<Item>();
+        final List<Item> items = new ArrayList<>();
         for (Tokenizer tokenizer = new Tokenizer(version); tokenizer.next();) {
             Item item = tokenizer.toItem();
             items.add(item);
@@ -210,7 +210,7 @@ public class DefaultArtifactVersion implements Comparable<DefaultArtifactVersion
         private static final Map<String, Integer> QUALIFIERS;
 
         static {
-            QUALIFIERS = new TreeMap<String, Integer>(String.CASE_INSENSITIVE_ORDER);
+            QUALIFIERS = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
             QUALIFIERS.put("alpha", QUALIFIER_ALPHA);
             QUALIFIERS.put("beta", QUALIFIER_BETA);
             QUALIFIERS.put("milestone", QUALIFIER_MILESTONE);

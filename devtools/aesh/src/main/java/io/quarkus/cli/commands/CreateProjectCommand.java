@@ -2,6 +2,7 @@ package io.quarkus.cli.commands;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.HashMap;
 
 import org.aesh.command.Command;
@@ -53,7 +54,7 @@ public class CreateProjectCommand implements Command<CommandInvocation> {
                     commandInvocation.println("Failed to create project");
                 }
             } catch (IOException e) {
-                throw new RuntimeException(e.getMessage(), e);
+                throw new UncheckedIOException(e.getMessage(), e);
             }
         } else {
             commandInvocation.println("You need to set the path for the project");

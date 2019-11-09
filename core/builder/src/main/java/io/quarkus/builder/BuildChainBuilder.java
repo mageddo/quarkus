@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ public final class BuildChainBuilder {
 
     private final BuildStepBuilder finalStep;
     private final List<BuildProvider> providers = new ArrayList<>();
-    private final Map<BuildStepBuilder, StackTraceElement[]> steps = new HashMap<BuildStepBuilder, StackTraceElement[]>();
+    private final Map<BuildStepBuilder, StackTraceElement[]> steps = new HashMap<>();
     private final Set<ItemId> initialIds = new HashSet<>();
     private final Set<ItemId> finalIds = new HashSet<>();
 
@@ -297,7 +298,7 @@ public final class BuildChainBuilder {
                     }
                 }
             } catch (IOException ioe) {
-                throw new RuntimeException("Failed to write debug graph output", ioe);
+                throw new UncheckedIOException("Failed to write debug graph output", ioe);
             }
         }
         return new BuildChain(initialSingleCount, initialMultiCount, startSteps, consumed, this, endSteps.size());

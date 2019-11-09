@@ -6,6 +6,7 @@ import static io.quarkus.vault.runtime.config.VaultAuthenticationType.KUBERNETES
 import static io.quarkus.vault.runtime.config.VaultAuthenticationType.USERPASS;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -129,7 +130,7 @@ public class VaultAuthManager {
         try {
             return Files.readAllBytes(Paths.get(path));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
     }
 

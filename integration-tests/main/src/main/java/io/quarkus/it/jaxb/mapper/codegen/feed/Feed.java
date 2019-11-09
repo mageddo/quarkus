@@ -218,7 +218,7 @@ public class Feed {
      */
     public List<Link> getLink() {
         if (link == null) {
-            link = new ArrayList<Link>();
+            link = new ArrayList<>();
         }
         return this.link;
     }
@@ -320,7 +320,7 @@ public class Feed {
      */
     public List<Entry> getEntry() {
         if (entry == null) {
-            entry = new ArrayList<Entry>();
+            entry = new ArrayList<>();
         }
         return this.entry;
     }

@@ -228,7 +228,7 @@ class AsyncEventDeliveryStage<T> implements CompletionStage<T> {
     }
 
     private <C> CompletionStage<C> wrap(CompletionStage<C> completionStage) {
-        return new AsyncEventDeliveryStage<C>(completionStage, defaultExecutor);
+        return new AsyncEventDeliveryStage<>(completionStage, defaultExecutor);
     }
 
     @Override

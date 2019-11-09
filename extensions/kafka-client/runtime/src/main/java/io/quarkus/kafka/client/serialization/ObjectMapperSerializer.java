@@ -2,6 +2,7 @@ package io.quarkus.kafka.client.serialization;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.Map;
 
 import org.apache.kafka.common.serialization.Deserializer;
@@ -34,7 +35,7 @@ public class ObjectMapperSerializer<T> implements Serializer<T> {
             objectMapper.writeValue(output, data);
             return output.toByteArray();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
     }
 

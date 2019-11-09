@@ -505,7 +505,7 @@ public class CreateExtensionMojo extends AbstractMojo {
         if (runtimeBomPath != null) {
             getLog().info(
                     String.format("Adding [%s] to dependencyManagement in [%s]", model.artifactId, runtimeBomPath));
-            List<PomTransformer.Transformation> transformations = new ArrayList<PomTransformer.Transformation>();
+            List<PomTransformer.Transformation> transformations = new ArrayList<>();
             transformations
                     .add(Transformation.addManagedDependency(model.groupId, model.artifactId, model.bomEntryVersion));
             for (Gavtcs gavtcs : model.additionalRuntimeDependencies) {
