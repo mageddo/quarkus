@@ -78,11 +78,11 @@ public class HibernateOrmConfig {
     /**
      * The size of the batches used when loading entities and collections.
      *
-     * `-1` means batch loading is disabled. This is the default.
+     * `0` means batch loading is disabled. This is the default.
      *
      * @asciidoclet
      */
-    @ConfigItem(defaultValue = "-1")
+    @ConfigItem(defaultValue = "0")
     public int batchFetchSize;
 
     /**
@@ -90,28 +90,28 @@ public class HibernateOrmConfig {
      */
     @ConfigItem
     @ConfigDocSection
-    public HibernateOrmConfigQuery query;
+    public Optional<HibernateOrmConfigQuery> query;
 
     /**
      * Database related configuration.
      */
     @ConfigItem
     @ConfigDocSection
-    public HibernateOrmConfigDatabase database;
+    public Optional<HibernateOrmConfigDatabase> database;
 
     /**
      * JDBC related configuration.
      */
     @ConfigItem
     @ConfigDocSection
-    public HibernateOrmConfigJdbc jdbc;
+    public Optional<HibernateOrmConfigJdbc> jdbc;
 
     /**
      * Logging configuration.
      */
     @ConfigItem
     @ConfigDocSection
-    public HibernateOrmConfigLog log;
+    public Optional<HibernateOrmConfigLog> log;
 
     /**
      * Caching configuration
@@ -131,10 +131,10 @@ public class HibernateOrmConfig {
                 sqlLoadScript.isPresent() ||
                 batchFetchSize > 0 ||
                 statistics ||
-                query.isAnyPropertySet() ||
-                database.isAnyPropertySet() ||
-                jdbc.isAnyPropertySet() ||
-                log.isAnyPropertySet() ||
+                query.isPresent() ||
+                database.isPresent() ||
+                jdbc.isPresent() ||
+                log.isPresent() ||
                 !cache.isEmpty();
     }
 
@@ -156,10 +156,6 @@ public class HibernateOrmConfig {
          */
         @ConfigItem
         public Optional<String> defaultNullOrdering;
-
-        public boolean isAnyPropertySet() {
-            return queryPlanCacheMaxSize.isPresent() || defaultNullOrdering.isPresent();
-        }
     }
 
     @ConfigGroup
@@ -198,12 +194,6 @@ public class HibernateOrmConfig {
          */
         @ConfigItem
         public Optional<String> charset;
-
-        public boolean isAnyPropertySet() {
-            return !"none".equals(generation) || defaultCatalog.isPresent() || defaultSchema.isPresent()
-                    || generationHaltOnError
-                    || charset.isPresent();
-        }
     }
 
     @ConfigGroup
@@ -226,10 +216,6 @@ public class HibernateOrmConfig {
          */
         @ConfigItem
         public Optional<Integer> statementBatchSize;
-
-        public boolean isAnyPropertySet() {
-            return timezone.isPresent() || statementFetchSize.isPresent() || statementBatchSize.isPresent();
-        }
     }
 
     @ConfigGroup
@@ -248,10 +234,6 @@ public class HibernateOrmConfig {
          */
         @ConfigItem(defaultValueDocumentation = "depends on dialect")
         public Optional<Boolean> jdbcWarnings;
-
-        public boolean isAnyPropertySet() {
-            return sql || jdbcWarnings.isPresent();
-        }
     }
 
     @ConfigGroup
