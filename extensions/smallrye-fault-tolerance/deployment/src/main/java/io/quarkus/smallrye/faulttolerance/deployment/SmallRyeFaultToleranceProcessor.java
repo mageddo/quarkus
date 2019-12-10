@@ -50,6 +50,7 @@ import io.quarkus.deployment.builditem.ShutdownContextBuildItem;
 import io.quarkus.deployment.builditem.SystemPropertyBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageSystemPropertyBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
+import io.quarkus.deployment.builditem.nativeimage.RuntimeInitializedClassBuildItem;
 import io.quarkus.deployment.logging.LogCleanupFilterBuildItem;
 import io.quarkus.smallrye.faulttolerance.runtime.NoopMetricRegistry;
 import io.quarkus.smallrye.faulttolerance.runtime.QuarkusFallbackHandlerProvider;
@@ -229,5 +230,10 @@ public class SmallRyeFaultToleranceProcessor {
         // impl note - we depend on BeanContainerBuildItem to make sure Arc registers before SR FT
         // this is needed so that shutdown context of FT is executed before Arc container shuts down
         recorder.resetCommandContextOnUndeploy(context);
+    }
+
+    @BuildStep
+    public RuntimeInitializedClassBuildItem runtimeInitializedClass() {
+        return new RuntimeInitializedClassBuildItem(DefaultHystrixConcurrencyStrategy.class.getName());
     }
 }
