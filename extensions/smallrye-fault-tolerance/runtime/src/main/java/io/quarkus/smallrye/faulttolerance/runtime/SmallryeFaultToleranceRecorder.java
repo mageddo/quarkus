@@ -19,6 +19,7 @@ import com.netflix.hystrix.metric.HystrixThreadPoolCompletionStream;
 
 import io.quarkus.runtime.ShutdownContext;
 import io.quarkus.runtime.annotations.Recorder;
+import io.smallrye.faulttolerance.HystrixInitializer;
 import io.smallrye.faulttolerance.config.FaultToleranceOperation;
 
 @Recorder
@@ -96,5 +97,9 @@ public class SmallryeFaultToleranceRecorder {
             currentClass = currentClass.getSuperclass();
         }
         return allMethods;
+    }
+
+    public void initHystrix(HystrixInitializer hystrixInitializer) {
+        hystrixInitializer.toString();
     }
 }

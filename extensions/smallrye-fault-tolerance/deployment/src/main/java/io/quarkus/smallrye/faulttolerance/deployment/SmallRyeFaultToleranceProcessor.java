@@ -230,10 +230,6 @@ public class SmallRyeFaultToleranceProcessor {
         // impl note - we depend on BeanContainerBuildItem to make sure Arc registers before SR FT
         // this is needed so that shutdown context of FT is executed before Arc container shuts down
         recorder.resetCommandContextOnUndeploy(context);
-    }
-
-    @BuildStep
-    public RuntimeInitializedClassBuildItem runtimeInitializedClass() {
-        return new RuntimeInitializedClassBuildItem(DefaultHystrixConcurrencyStrategy.class.getName());
+        beanContainer.getValue().instance(HystrixInitializer.class);
     }
 }

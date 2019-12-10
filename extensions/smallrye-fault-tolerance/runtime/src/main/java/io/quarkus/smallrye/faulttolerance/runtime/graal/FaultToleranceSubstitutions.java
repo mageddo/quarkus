@@ -3,11 +3,18 @@ package io.quarkus.smallrye.faulttolerance.runtime.graal;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Initialized;
+import javax.enterprise.event.Observes;
+
 import org.apache.commons.configuration.AbstractConfiguration;
 
 import com.netflix.config.jmx.ConfigMBean;
+import com.oracle.svm.core.annotate.Delete;
 import com.oracle.svm.core.annotate.Substitute;
 import com.oracle.svm.core.annotate.TargetClass;
+
+import io.smallrye.faulttolerance.HystrixInitializer;
 
 public class FaultToleranceSubstitutions {
 }
@@ -40,5 +47,13 @@ final class Target_io_smallrye_faulttolerance_DefaultMethodFallbackProvider {
             throws IllegalAccessException, InstantiationException, IllegalArgumentException, InvocationTargetException,
             Throwable {
         throw new RuntimeException("Not implemented in native mode");
+    }
+}
+
+@TargetClass(HystrixInitializer.class)
+final class Target_io_smallrye_faulttolerance_HystrixInitializer {
+    
+    @Delete
+    void init(Object event) {
     }
 }
