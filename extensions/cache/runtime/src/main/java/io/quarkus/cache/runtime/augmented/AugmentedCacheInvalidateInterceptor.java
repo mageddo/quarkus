@@ -2,8 +2,6 @@ package io.quarkus.cache.runtime.augmented;
 
 import static javax.interceptor.Interceptor.Priority.PLATFORM_BEFORE;
 
-import java.lang.annotation.Annotation;
-
 import javax.annotation.Priority;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
@@ -22,17 +20,13 @@ public class AugmentedCacheInvalidateInterceptor extends AugmentedCacheAnnotatio
 
     @AroundInvoke
     public Object intercept(InvocationContext context) throws Exception {
-        Cache cache = getCache(context, AugmentedCacheInvalidate.class);
+        AugmentedCacheInvalidate annotation = getCacheAnnotation(context, AugmentedCacheInvalidate.class);
+        Cache cache = cacheRepository.getCache(annotation.cacheName());
         Object key = getCacheKey(context, cache.getName());
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debugf("Invalidating entry with key [%s] from cache [%s]", key, cache.getName());
         }
         cache.invalidate(key);
         return context.proceed();
-    }
-
-    @Override
-    protected String getAnnotationCacheName(Annotation annotation) {
-        return AugmentedCacheInvalidate.class.cast(annotation).cacheName();
     }
 }

@@ -1,6 +1,5 @@
 package io.quarkus.cache.test.runtime;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.inject.Inject;
@@ -35,82 +34,88 @@ public class ImplicitCompositeKeyCacheTest {
 
     @Test
     public void testAllCacheAnnotations() {
-        assertEquals(0, cachedService.getCacheResultInvocations());
-
         // STEP 1
-        // Let's start by getting something and cache the result by calling a @CacheResult-annotated method.
-        String value1 = cachedService.cacheResult(KEY_1_ELEMENT_1, KEY_1_ELEMENT_2);
-        assertEquals(1, cachedService.getCacheResultInvocations());
+        // Action: @CacheResult-annotated method call.
+        // Expected effect: method invoked and result cached.
+        // Verified by: STEP 2.
+        String value1 = cachedService.cachedMethod(KEY_1_ELEMENT_1, KEY_1_ELEMENT_2);
 
         // STEP 2
-        // If we get it again, the @CacheResult-annotated method should not be invoked and the result should come from the cache.
-        // Since it comes from the cache, the object reference should be equal to STEP 1.
-        String value2 = cachedService.cacheResult(KEY_1_ELEMENT_1, KEY_1_ELEMENT_2);
-        assertEquals(1, cachedService.getCacheResultInvocations());
+        // Action: same call as STEP 1.
+        // Expected effect: method not invoked and result coming from the cache.
+        // Verified by: same object reference between STEPS 1 and 2 results.
+        String value2 = cachedService.cachedMethod(KEY_1_ELEMENT_1, KEY_1_ELEMENT_2);
         assertTrue(value1 == value2);
 
         // STEP 3
-        // Now, let's call the same method with the same first argument and a different second argument.
-        // We changed one element of the key, so the @CacheResult-annotated method should be invoked and return a new object.
-        String value3 = cachedService.cacheResult(KEY_1_ELEMENT_1, 789);
-        assertEquals(2, cachedService.getCacheResultInvocations());
+        // Action: same call as STEP 2 with a changing key element.
+        // Expected effect: method invoked and result cached.
+        // Verified by: different objects references between STEPS 2 and 3 results.
+        String value3 = cachedService.cachedMethod(KEY_1_ELEMENT_1, 789);
         assertTrue(value2 != value3);
 
         // STEP 4
-        // We need to apply STEP 3 logic to the other argument, it should produce the same result.
-        String value4 = cachedService.cacheResult("quarkus", KEY_1_ELEMENT_2);
-        assertEquals(3, cachedService.getCacheResultInvocations());
+        // Action: same principle as STEP 3, but this time we're changing the other key element.
+        // Expected effect: method invoked and result cached.
+        // Verified by: different objects references between STEPS 2 and 4 results.
+        String value4 = cachedService.cachedMethod("quarkus", KEY_1_ELEMENT_2);
         assertTrue(value2 != value4);
 
         // STEP 5
-        // If the entire key is changed, another result should be returned from the @CacheResult-annotated method invocation.
-        String value5 = cachedService.cacheResult(KEY_2_ELEMENT_1, KEY_2_ELEMENT_2);
-        assertEquals(4, cachedService.getCacheResultInvocations());
+        // Action: same call as STEP 2 with an entirely new key.
+        // Expected effect: method invoked and result cached.
+        // Verified by: different objects references between STEPS 2 and 5 results.
+        String value5 = cachedService.cachedMethod(KEY_2_ELEMENT_1, KEY_2_ELEMENT_2);
         assertTrue(value2 != value5);
 
         // STEP 6
-        // Now, we want to delete the STEP 2 entry from the cache, but keep the STEP 5 entry.
+        // Action: cache entry invalidation.
+        // Expected effect: STEP 2 cache entry removed.
+        // Verified by: STEP 7.
         cachedService.invalidate(KEY_1_ELEMENT_1, KEY_1_ELEMENT_2);
 
         // STEP 7
-        // If we try to get the STEP 2 entry, the @CacheResult-annotated method should be invoked and return a new object.
-        String value7 = cachedService.cacheResult(KEY_1_ELEMENT_1, KEY_1_ELEMENT_2);
-        assertEquals(5, cachedService.getCacheResultInvocations());
+        // Action: same call as STEP 2.
+        // Expected effect: method invoked because of STEP 6 and result cached.
+        // Verified by: different objects references between STEPS 2 and 7 results.
+        String value7 = cachedService.cachedMethod(KEY_1_ELEMENT_1, KEY_1_ELEMENT_2);
         assertTrue(value2 != value7);
 
         // STEP 8
-        // But if we try to get the STEP 5 entry, it should come from the cache with no method invocation.
-        String value8 = cachedService.cacheResult(KEY_2_ELEMENT_1, KEY_2_ELEMENT_2);
-        assertEquals(5, cachedService.getCacheResultInvocations());
+        // Action: same call as STEP 5.
+        // Expected effect: method not invoked and result coming from the cache.
+        // Verified by: same object reference between STEPS 5 and 8 results.
+        String value8 = cachedService.cachedMethod(KEY_2_ELEMENT_1, KEY_2_ELEMENT_2);
         assertTrue(value5 == value8);
 
         // STEP 9
-        // Almost done, let's clear the entire cache.
+        // Action: full cache invalidation.
+        // Expected effect: empty cache.
+        // Verified by: STEPS 10 and 11.
         cachedService.invalidateAll();
 
         // STEP 10
-        // If we try to get the STEP 7 entry, the @CacheResult-annotated method should be invoked and return a new object.
-        String value10 = cachedService.cacheResult(KEY_1_ELEMENT_1, KEY_1_ELEMENT_2);
-        assertEquals(6, cachedService.getCacheResultInvocations());
+        // Action: same call as STEP 7.
+        // Expected effect: method invoked because of STEP 9 and result cached.
+        // Verified by: different objects references between STEPS 7 and 10 results.
+        String value10 = cachedService.cachedMethod(KEY_1_ELEMENT_1, KEY_1_ELEMENT_2);
         assertTrue(value7 != value10);
 
         // STEP 11
-        // If we try to get the STEP 8 entry, the @CacheResult-annotated method should be invoked and return a new object.
-        String value11 = cachedService.cacheResult(KEY_2_ELEMENT_1, KEY_2_ELEMENT_2);
-        assertEquals(7, cachedService.getCacheResultInvocations());
+        // Action: same call as STEP 8.
+        // Expected effect: method invoked because of STEP 9 and result cached.
+        // Verified by: different objects references between STEPS 8 and 11 results.
+        String value11 = cachedService.cachedMethod(KEY_2_ELEMENT_1, KEY_2_ELEMENT_2);
         assertTrue(value8 != value11);
     }
 
     @Singleton
     static class CachedService {
 
-        private static final String CACHE_NAME = "implicitCompositeKeyCache";
-
-        private int cacheResultInvocations;
+        private static final String CACHE_NAME = "test-cache";
 
         @CacheResult(cacheName = CACHE_NAME)
-        public String cacheResult(String keyElement1, int keyElement2) {
-            cacheResultInvocations++;
+        public String cachedMethod(String keyElement1, int keyElement2) {
             return new String();
         }
 
@@ -120,10 +125,6 @@ public class ImplicitCompositeKeyCacheTest {
 
         @CacheInvalidateAll(cacheName = CACHE_NAME)
         public void invalidateAll() {
-        }
-
-        public int getCacheResultInvocations() {
-            return cacheResultInvocations;
         }
     }
 }

@@ -6,7 +6,7 @@ package io.quarkus.cache.runtime;
  */
 public class NullValueConverter {
 
-    private static class NullValue {
+    private static final class NullValue {
         public static Object INSTANCE = new NullValue();
     }
 

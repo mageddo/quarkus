@@ -10,7 +10,6 @@ import javax.interceptor.InvocationContext;
 
 import io.quarkus.arc.runtime.InterceptorBindings;
 import io.quarkus.cache.CacheKey;
-import io.quarkus.cache.runtime.Cache;
 import io.quarkus.cache.runtime.CacheKeyBuilder;
 import io.quarkus.cache.runtime.CacheRepository;
 
@@ -19,20 +18,15 @@ public abstract class AugmentedCacheAnnotationInterceptor {
     @Inject
     CacheRepository cacheRepository;
 
-    protected abstract String getAnnotationCacheName(Annotation annotation);
-
-    protected Cache getCache(InvocationContext context, Class<?> cacheAnnotation) {
-        String cacheName = resolveCacheName(context, cacheAnnotation);
-        return cacheRepository.getCache(cacheName);
-    }
-
-    private String resolveCacheName(InvocationContext context, Class<?> cacheAnnotationClass) {
+    @SuppressWarnings("unchecked")
+    protected <T> T getCacheAnnotation(InvocationContext context, Class<T> cacheAnnotationClass) {
         for (Annotation annotation : InterceptorBindings.getInterceptorBindings(context)) {
             if (cacheAnnotationClass.isInstance(annotation)) {
-                return getAnnotationCacheName(annotation);
+                return (T) annotation;
             }
         }
-        throw new IllegalStateException("Unable to determine the cache name. Please report this to the development team.");
+        // The following exception should never be thrown.
+        throw new IllegalStateException("Unable to find the cache annotation");
     }
 
     protected Object getCacheKey(InvocationContext context, String cacheName) {

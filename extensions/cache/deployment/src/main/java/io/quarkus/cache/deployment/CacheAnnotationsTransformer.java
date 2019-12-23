@@ -7,6 +7,11 @@ import static io.quarkus.cache.deployment.CacheDeploymentConstants.CACHE_INVALID
 import static io.quarkus.cache.deployment.CacheDeploymentConstants.CACHE_INVALIDATE_ALL;
 import static io.quarkus.cache.deployment.CacheDeploymentConstants.CACHE_NAME_PARAMETER_NAME;
 import static io.quarkus.cache.deployment.CacheDeploymentConstants.CACHE_RESULT;
+import static io.quarkus.cache.deployment.CacheDeploymentConstants.LOCK_TIMEOUT_PARAMETER_NAME;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import org.jboss.jandex.AnnotationTarget.Kind;
 import org.jboss.jandex.AnnotationValue;
@@ -29,16 +34,32 @@ public class CacheAnnotationsTransformer implements AnnotationsTransformer {
     @Override
     public void transform(TransformationContext context) {
         MethodInfo method = context.getTarget().asMethod();
-        augmentAnnotationIfPresent(context, method, CACHE_RESULT, AUGMENTED_CACHE_RESULT);
-        augmentAnnotationIfPresent(context, method, CACHE_INVALIDATE, AUGMENTED_CACHE_INVALIDATE);
-        augmentAnnotationIfPresent(context, method, CACHE_INVALIDATE_ALL, AUGMENTED_CACHE_INVALIDATE_ALL);
+        if (method.hasAnnotation(CACHE_RESULT)) {
+            List<AnnotationValue> parameters = new ArrayList<>();
+            parameters.add(getCacheName(method, CACHE_RESULT));
+            findLockTimeout(method, CACHE_RESULT).ifPresent(parameters::add);
+            context.transform().add(AUGMENTED_CACHE_RESULT, parameters.toArray(new AnnotationValue[parameters.size()])).done();
+        }
+        if (method.hasAnnotation(CACHE_INVALIDATE)) {
+            AnnotationValue cacheName = getCacheName(method, CACHE_INVALIDATE);
+            context.transform().add(AUGMENTED_CACHE_INVALIDATE, cacheName).done();
+        }
+        if (method.hasAnnotation(CACHE_INVALIDATE_ALL)) {
+            AnnotationValue cacheName = getCacheName(method, CACHE_INVALIDATE_ALL);
+            context.transform().add(AUGMENTED_CACHE_INVALIDATE_ALL, cacheName).done();
+        }
     }
 
-    private void augmentAnnotationIfPresent(TransformationContext context, MethodInfo method, DotName before, DotName after) {
-        if (method.hasAnnotation(before)) {
-            String cacheName = method.annotation(before).value(CACHE_NAME_PARAMETER_NAME).asString();
-            AnnotationValue annotationValue = AnnotationValue.createStringValue(CACHE_NAME_PARAMETER_NAME, cacheName);
-            context.transform().add(after, annotationValue).done();
+    private AnnotationValue getCacheName(MethodInfo method, DotName apiAnnotation) {
+        String cacheName = method.annotation(apiAnnotation).value(CACHE_NAME_PARAMETER_NAME).asString();
+        return AnnotationValue.createStringValue(CACHE_NAME_PARAMETER_NAME, cacheName);
+    }
+
+    private Optional<AnnotationValue> findLockTimeout(MethodInfo method, DotName apiAnnotation) {
+        AnnotationValue lockTimeout = method.annotation(apiAnnotation).value(LOCK_TIMEOUT_PARAMETER_NAME);
+        if (lockTimeout == null) {
+            return Optional.empty();
         }
+        return Optional.of(AnnotationValue.createLongalue(LOCK_TIMEOUT_PARAMETER_NAME, lockTimeout.asLong()));
     }
 }

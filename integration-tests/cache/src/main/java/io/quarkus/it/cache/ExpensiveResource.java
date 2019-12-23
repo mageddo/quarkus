@@ -20,7 +20,7 @@ public class ExpensiveResource {
     @GET
     @Path("/{keyElement1}/{keyElement2}/{keyElement3}")
     @Produces(MediaType.APPLICATION_JSON)
-    @CacheResult(cacheName = "expensiveResourceCache")
+    @CacheResult(cacheName = "expensiveResourceCache", lockTimeout = 5000)
     public ExpensiveResponse getExpensiveResponse(@PathParam("keyElement1") @CacheKey String keyElement1,
             @PathParam("keyElement2") @CacheKey String keyElement2, @PathParam("keyElement3") @CacheKey String keyElement3,
             @QueryParam("foo") String foo) {

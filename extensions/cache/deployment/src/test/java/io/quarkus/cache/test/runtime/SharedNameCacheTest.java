@@ -1,6 +1,5 @@
 package io.quarkus.cache.test.runtime;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.enterprise.context.Dependent;
@@ -34,31 +33,31 @@ public class SharedNameCacheTest {
 
     @Test
     public void testAllCacheAnnotations() {
-        assertEquals(0, nameProducerCachedService.getCacheResultInvocations());
-
         // STEP 1
-        // Let's start by getting something from the shared cache and cache the result by calling a @CacheResult-annotated
-        // method.
-        String value1 = nameProducerCachedService.cacheResult(KEY);
-        assertEquals(1, nameProducerCachedService.getCacheResultInvocations());
+        // Action: @CacheResult-annotated method call.
+        // Expected effect: method invoked and result cached in shared cache.
+        // Verified by: STEP 2.
+        String value1 = nameProducerCachedService.cachedMethod(KEY);
 
         // STEP 2
-        // If we get it from the shared cache again, the @CacheResult-annotated method should not be invoked and the result
-        // should come from the cache. Since it comes from the cache, the object reference should be equal to STEP 1.
-        String value2 = nameProducerCachedService.cacheResult(KEY);
-        assertEquals(1, nameProducerCachedService.getCacheResultInvocations());
+        // Action: same call as STEP 1.
+        // Expected effect: method not invoked and result coming from the shared cache.
+        // Verified by: same object reference between STEPS 1 and 2 results.
+        String value2 = nameProducerCachedService.cachedMethod(KEY);
         assertTrue(value1 == value2);
 
         // STEP 3
-        // Let's clear the entire cache used by the shared cache, but from another bean.
+        // Action: full shared cache invalidation launched from a different bean than STEPS 1 and 2 calls.
+        // Expected effect: empty cache.
+        // Verified by: STEPS 4.
         nameConsumerCachedService.invalidateAll();
 
         // STEP 4
-        // If we get the STEP 1 value from the shared cache again, the @CacheResult-annotated method should be invoked since
-        // the cache was cleared in STEP 3. The returned object should have a different reference from STEP 1.
-        String value4 = nameProducerCachedService.cacheResult(KEY);
-        assertEquals(2, nameProducerCachedService.getCacheResultInvocations());
-        assertTrue(value1 != value4);
+        // Action: same call as STEP 2.
+        // Expected effect: method invoked because of STEP 3 and result cached.
+        // Verified by: different objects references between STEPS 2 and 4 results.
+        String value4 = nameProducerCachedService.cachedMethod(KEY);
+        assertTrue(value2 != value4);
     }
 
     @Dependent
