@@ -29,4 +29,10 @@ public @interface CacheResult {
      */
     @Nonbinding
     String cacheName();
+
+    @Nonbinding
+    boolean lockOnMiss() default false;
+
+    @Nonbinding
+    long lockTimeout() default 0;
 }

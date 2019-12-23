@@ -6,9 +6,7 @@ public interface Cache {
 
     String getName();
 
-    Object get(Object key, Callable<Object> mappingFunction);
-
-    void put(Object key, Object value);
+    Object get(Object key, Callable<Object> valueLoader, boolean lockOnMiss, long lockTimeout);
 
     void invalidate(Object key);
 

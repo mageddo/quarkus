@@ -27,6 +27,8 @@ public class CacheDeploymentConstants {
 
     public static final String CAFFEINE_CACHE_TYPE = "caffeine";
     public static final String CACHE_NAME_PARAMETER_NAME = "cacheName";
+    public static final String LOCK_ON_MISS_PARAMETER_NAME = "lockOnMiss";
+    public static final String LOCK_TIMEOUT_PARAMETER_NAME = "lockTimeout";
 
     private static DotName dotName(Class<?> annotationClass) {
         return DotName.createSimple(annotationClass.getName());

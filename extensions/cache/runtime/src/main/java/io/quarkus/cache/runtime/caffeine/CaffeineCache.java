@@ -51,13 +51,8 @@ public class CaffeineCache implements Cache {
     }
 
     @Override
-    public Object get(Object key, Callable<Object> mappingFunction) {
-        return fromCacheValue(cache.get(key, new MappingFunction(mappingFunction)));
-    }
-
-    @Override
-    public void put(Object key, Object value) {
-        cache.put(key, toCacheValue(value));
+    public Object get(Object key, Callable<Object> valueLoader, boolean lockOnMiss, long lockTimeout) {
+        return fromCacheValue(cache.get(key, new MappingFunction(valueLoader)));
     }
 
     @Override
@@ -97,16 +92,16 @@ public class CaffeineCache implements Cache {
 
     private static class MappingFunction implements Function<Object, Object> {
 
-        private final Callable<?> mappingFunction;
+        private final Callable<?> valueLoader;
 
-        public MappingFunction(Callable<?> mappingFunction) {
-            this.mappingFunction = mappingFunction;
+        public MappingFunction(Callable<?> valueLoader) {
+            this.valueLoader = valueLoader;
         }
 
         @Override
         public Object apply(Object unusedArg) {
             try {
-                return toCacheValue(mappingFunction.call());
+                return toCacheValue(valueLoader.call());
             } catch (RuntimeException e) {
                 throw e;
             } catch (Exception e) {
