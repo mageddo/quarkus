@@ -267,6 +267,12 @@ The key computation is done from all the method arguments if none of them is ann
 If a value is found in the cache, it is returned and the annotated method is never actually executed.
 If no value is found, the annotated method is invoked and the returned value is stored in the cache using the computed or generated key.
 
+A method annotated with `CacheResult` is protected by a lock on cache miss mechanism.
+If several threads try to retrieve a cache value from the same missing key concurrently, the method will only be invoked once.
+The first calling thread will trigger the method invocation while the subsequent calling threads will wait for the end of the invocation to get the cached result.
+The `lockTimeout` parameter can be used to interrupt the lock after a given delay.
+See the parameter Javadoc for more details.
+
 This annotation can neither be used on a method returning `void` nor in combination with another Quarkus method caching annotation.
 
 === @CacheInvalidate

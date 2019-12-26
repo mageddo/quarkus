@@ -17,8 +17,5 @@ public @interface AugmentedCacheResult {
     String cacheName() default "";
 
     @Nonbinding
-    boolean lockOnMiss() default false;
-
-    @Nonbinding
     long lockTimeout() default 0;
 }

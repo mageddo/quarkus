@@ -7,7 +7,6 @@ import static io.quarkus.cache.deployment.CacheDeploymentConstants.CACHE_INVALID
 import static io.quarkus.cache.deployment.CacheDeploymentConstants.CACHE_INVALIDATE_ALL;
 import static io.quarkus.cache.deployment.CacheDeploymentConstants.CACHE_NAME_PARAMETER_NAME;
 import static io.quarkus.cache.deployment.CacheDeploymentConstants.CACHE_RESULT;
-import static io.quarkus.cache.deployment.CacheDeploymentConstants.LOCK_ON_MISS_PARAMETER_NAME;
 import static io.quarkus.cache.deployment.CacheDeploymentConstants.LOCK_TIMEOUT_PARAMETER_NAME;
 
 import java.util.ArrayList;
@@ -38,8 +37,7 @@ public class CacheAnnotationsTransformer implements AnnotationsTransformer {
         if (method.hasAnnotation(CACHE_RESULT)) {
             List<AnnotationValue> parameters = new ArrayList<>();
             parameters.add(getCacheName(method, CACHE_RESULT));
-            getCacheLockOnMiss(method, CACHE_RESULT).ifPresent(parameters::add);
-            getCacheLockTimeout(method, CACHE_RESULT).ifPresent(parameters::add);
+            findLockTimeout(method, CACHE_RESULT).ifPresent(parameters::add);
             context.transform().add(AUGMENTED_CACHE_RESULT, parameters.toArray(new AnnotationValue[parameters.size()])).done();
         }
         if (method.hasAnnotation(CACHE_INVALIDATE)) {
@@ -57,15 +55,7 @@ public class CacheAnnotationsTransformer implements AnnotationsTransformer {
         return AnnotationValue.createStringValue(CACHE_NAME_PARAMETER_NAME, cacheName);
     }
 
-    private Optional<AnnotationValue> getCacheLockOnMiss(MethodInfo method, DotName apiAnnotation) {
-        AnnotationValue lockOnMiss = method.annotation(apiAnnotation).value(LOCK_ON_MISS_PARAMETER_NAME);
-        if (lockOnMiss == null) {
-            return Optional.empty();
-        }
-        return Optional.of(AnnotationValue.createBooleanValue(LOCK_ON_MISS_PARAMETER_NAME, lockOnMiss.asBoolean()));
-    }
-
-    private Optional<AnnotationValue> getCacheLockTimeout(MethodInfo method, DotName apiAnnotation) {
+    private Optional<AnnotationValue> findLockTimeout(MethodInfo method, DotName apiAnnotation) {
         AnnotationValue lockTimeout = method.annotation(apiAnnotation).value(LOCK_TIMEOUT_PARAMETER_NAME);
         if (lockTimeout == null) {
             return Optional.empty();

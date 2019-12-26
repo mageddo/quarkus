@@ -26,6 +26,6 @@ public class AugmentedCacheResultInterceptor extends AugmentedCacheAnnotationInt
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debugf("Loading entry with key [%s] from cache [%s]", key, cache.getName());
         }
-        return cache.get(key, () -> context.proceed(), annotation.lockOnMiss(), annotation.lockTimeout());
+        return cache.get(key, () -> context.proceed(), annotation.lockTimeout());
     }
 }

@@ -6,7 +6,7 @@ public interface Cache {
 
     String getName();
 
-    Object get(Object key, Callable<Object> valueLoader, boolean lockOnMiss, long lockTimeout);
+    Object get(Object key, Callable<Object> valueLoader, long lockTimeout) throws Exception;
 
     void invalidate(Object key);
 

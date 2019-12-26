@@ -34,50 +34,53 @@ public class NullKeyOrValueCacheTest {
     @Test
     public void testNullKeys() {
         assertThrows(NullPointerException.class, () -> {
-            cachedService.nullKeyCacheResult(null);
+            cachedService.cachedMethod(null);
         }, NULL_KEYS_NOT_SUPPORTED_MSG);
         assertThrows(NullPointerException.class, () -> {
-            cachedService.nullKeyInvalidate(null);
+            cachedService.invalidate(null);
         }, NULL_KEYS_NOT_SUPPORTED_MSG);
     }
 
     @Test
     public void testNullValues() {
-        assertEquals(0, cachedService.getNullValueCacheResultInvocations());
+        assertEquals(0, cachedService.getCachedMethodInvocations());
 
-        // Let's start by getting a null value and cache it by calling a @CacheResult-annotated method.   
-        Object value1 = cachedService.nullValueCacheResult(KEY);
-        assertEquals(1, cachedService.getNullValueCacheResultInvocations());
+        // STEP 1
+        // Action: @CacheResult-annotated method call.
+        // Expected effect: method invoked and result cached.
+        // Verified by: STEP 2.
+        Object value1 = cachedService.cachedMethod(KEY);
+        assertEquals(1, cachedService.getCachedMethodInvocations());
         assertNull(value1);
 
-        // If we get it again, the @CacheResult-annotated method should not be invoked and the result should come from the cache. 
-        Object value2 = cachedService.nullValueCacheResult(KEY);
-        assertEquals(1, cachedService.getNullValueCacheResultInvocations());
+        // STEP 2
+        // Action: same call as STEP 1.
+        // Expected effect: method not invoked and result coming from the cache.
+        // Verified by: same number of cached method invocations between STEPS 1 and 2.
+        Object value2 = cachedService.cachedMethod(KEY);
+        assertEquals(1, cachedService.getCachedMethodInvocations());
         assertNull(value2);
     }
 
     @Dependent
     static class CachedService {
 
-        private int nullValueCacheResultInvocations;
+        private static final String CACHE_NAME = "test-cache";
 
-        @CacheResult(cacheName = "nullKeyCache")
-        public Object nullKeyCacheResult(Object key) {
+        private int cachedMethodInvocations;
+
+        @CacheResult(cacheName = CACHE_NAME)
+        public Object cachedMethod(Object key) {
+            cachedMethodInvocations++;
             return null;
         }
 
-        @CacheInvalidate(cacheName = "nullKeyCache")
-        public void nullKeyInvalidate(Object key) {
+        @CacheInvalidate(cacheName = CACHE_NAME)
+        public void invalidate(Object key) {
         }
 
-        @CacheResult(cacheName = "nullValueCache")
-        public Object nullValueCacheResult(Object key) {
-            nullValueCacheResultInvocations++;
-            return null;
-        }
-
-        public int getNullValueCacheResultInvocations() {
-            return nullValueCacheResultInvocations;
+        public int getCachedMethodInvocations() {
+            return cachedMethodInvocations;
         }
     }
 }
