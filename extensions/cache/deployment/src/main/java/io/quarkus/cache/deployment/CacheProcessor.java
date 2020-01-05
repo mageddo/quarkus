@@ -6,7 +6,6 @@ import static io.quarkus.deployment.annotations.ExecutionTime.STATIC_INIT;
 import static org.jboss.jandex.AnnotationTarget.Kind.METHOD;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -26,9 +25,7 @@ import io.quarkus.arc.deployment.ValidationPhaseBuildItem.ValidationErrorBuildIt
 import io.quarkus.arc.processor.AnnotationStore;
 import io.quarkus.arc.processor.BeanInfo;
 import io.quarkus.arc.processor.BuildExtension.Key;
-import io.quarkus.cache.runtime.augmented.AugmentedCacheInvalidateAllInterceptor;
-import io.quarkus.cache.runtime.augmented.AugmentedCacheInvalidateInterceptor;
-import io.quarkus.cache.runtime.augmented.AugmentedCacheResultInterceptor;
+import io.quarkus.cache.runtime.CacheOperationInterceptor;
 import io.quarkus.cache.runtime.caffeine.CaffeineCacheBuildRecorder;
 import io.quarkus.cache.runtime.caffeine.CaffeineCacheInfo;
 import io.quarkus.deployment.annotations.BuildStep;
@@ -49,11 +46,8 @@ class CacheProcessor {
     }
 
     @BuildStep
-    List<AdditionalBeanBuildItem> additionalBeans() {
-        return Arrays.asList(
-                new AdditionalBeanBuildItem(AugmentedCacheInvalidateAllInterceptor.class),
-                new AdditionalBeanBuildItem(AugmentedCacheInvalidateInterceptor.class),
-                new AdditionalBeanBuildItem(AugmentedCacheResultInterceptor.class));
+    AdditionalBeanBuildItem additionalBean() {
+        return new AdditionalBeanBuildItem(CacheOperationInterceptor.class);
     }
 
     @BuildStep

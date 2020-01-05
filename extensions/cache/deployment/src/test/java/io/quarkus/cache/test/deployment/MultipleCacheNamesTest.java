@@ -12,18 +12,18 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import io.quarkus.cache.CacheInvalidateAll;
+import io.quarkus.cache.CacheInvalidate;
 import io.quarkus.cache.CacheResult;
-import io.quarkus.cache.deployment.exception.MultipleCacheAnnotationsException;
+import io.quarkus.cache.deployment.exception.MultipleCacheNamesException;
 import io.quarkus.test.QuarkusUnitTest;
 
-public class MultipleCacheAnnotationsTest {
+public class MultipleCacheNamesTest {
 
     @RegisterExtension
     static final QuarkusUnitTest TEST = new QuarkusUnitTest()
             .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class).addClass(TestResource.class)).assertException(e -> {
                 assertEquals(DeploymentException.class, e.getClass());
-                assertEquals(MultipleCacheAnnotationsException.class, e.getCause().getClass());
+                assertEquals(MultipleCacheNamesException.class, e.getCause().getClass());
             });
 
     @Test
@@ -34,11 +34,9 @@ public class MultipleCacheAnnotationsTest {
     @Path("/test")
     static class TestResource {
 
-        private static final String CACHE_NAME = "multipleCacheAnnotationsCache";
-
         @GET
-        @CacheResult(cacheName = CACHE_NAME)
-        @CacheInvalidateAll(cacheName = CACHE_NAME)
+        @CacheInvalidate(cacheName = "foo")
+        @CacheResult(cacheName = "bar")
         public String shouldThrowDeploymentException(String key) {
             return null;
         }
